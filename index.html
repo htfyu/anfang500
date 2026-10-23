@@ -1,0 +1,1117 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安全防范系统安装维护员 · 500题练习与随机模考</title>
+<style>
+:root{
+  --bg:#eef2f8; --card:#fff; --line:#e3e9f2; --text:#0f172a; --muted:#64748b;
+  --blue:#2563eb; --blue-d:#1d4ed8; --blue-l:#eff6ff; --blue-b:#bfdbfe;
+  --green:#15803d; --green-bg:#e8f8ee; --green-bd:#86efac;
+  --red:#b91c1c; --red-bg:#fdecec; --red-bd:#fca5a5;
+  --amber:#b45309; --amber-bg:#fff8e6; --amber-bd:#fcd34d;
+  --slate-bg:#f8fafc;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 10px 30px rgba(15,23,42,.07);
+  --r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--text); min-height:100vh;
+  font-family:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.65;
+}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.hide{display:none !important}
+
+/* ---------- 顶栏 ---------- */
+.topbar{
+  position:sticky; top:0; z-index:40; background:rgba(255,255,255,.92);
+  backdrop-filter:saturate(1.4) blur(8px);
+  border-bottom:1px solid var(--line);
+  padding:10px 22px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.brand{display:flex; align-items:center; gap:11px; min-width:0}
+.brand .logo{
+  width:38px;height:38px;border-radius:11px;flex:none;
+  background:linear-gradient(135deg,#2563eb,#3b82f6); color:#fff;
+  display:grid;place-items:center;font-size:18px;font-weight:700;
+  box-shadow:0 4px 12px rgba(37,99,235,.35);
+}
+.brand h1{font-size:16px;line-height:1.25;letter-spacing:.2px}
+.brand p{font-size:11.5px;color:var(--muted);line-height:1.3}
+.stats{
+  display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:#334155;
+  background:var(--slate-bg);border:1px solid var(--line);border-radius:999px;padding:5px 16px;
+}
+.stats b{color:var(--blue)}
+.stats .w b{color:var(--red)}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-left:auto}
+.btn{
+  border-radius:10px;padding:7px 13px;font-size:13px;background:#eef2f7;color:#334155;
+  border:1px solid transparent; transition:.16s; white-space:nowrap;
+}
+.btn:hover{background:#e2e8f0}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(37,99,235,.3)}
+.btn.primary:hover{background:var(--blue-d)}
+.btn.ok{background:var(--green);color:#fff}
+.btn.ok:hover{background:#166534}
+.btn.ghost{background:#fff;border-color:var(--line)}
+.btn.ghost:hover{background:var(--slate-bg)}
+.btn.danger{background:#fff;border-color:#fecaca;color:var(--red)}
+.btn.danger:hover{background:var(--red-bg)}
+.btn.small{padding:4px 9px;font-size:12px}
+.btn[aria-pressed="true"]{background:var(--blue-l);border-color:var(--blue-b);color:var(--blue)}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:1120px;margin:0 auto;padding:20px 22px 60px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;align-items:start}
+@media (max-width:900px){ .split{grid-template-columns:1fr} .side{order:2} }
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.qcard{padding:22px 24px 18px}
+.qhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tag{
+  font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;
+  background:var(--blue-l);color:var(--blue);border:1px solid var(--blue-b);
+}
+.tag.multi{background:#f5edff;color:#7e22ce;border-color:#e9d5ff}
+.tag.judge{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
+.qindex{font-size:13px;color:var(--muted)}
+.pdfref{font-size:12px;color:var(--muted);margin-left:auto}
+.stem{font-size:17px;line-height:1.75;font-weight:600;margin:4px 0 16px;word-break:break-word}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{
+  display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;
+  padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;
+  transition:.14s; font-size:14.5px; line-height:1.55;
+}
+.opt:hover:not(:disabled){border-color:var(--blue-b);background:#fbfdff}
+.opt .badge{
+  flex:none;width:24px;height:24px;border-radius:7px;background:#f1f5f9;color:#475569;
+  display:grid;place-items:center;font-size:12.5px;font-weight:700;margin-top:1px;
+}
+.opt .txt{flex:1;min-width:0;word-break:break-word}
+.opt.picked{border-color:var(--blue);background:var(--blue-l)}
+.opt.picked .badge{background:var(--blue);color:#fff}
+.opt.right{border-color:var(--green-bd);background:var(--green-bg)}
+.opt.right .badge{background:var(--green);color:#fff}
+.opt.wrongpick{border-color:var(--red-bd);background:var(--red-bg)}
+.opt.wrongpick .badge{background:var(--red);color:#fff}
+.opt.dim{opacity:.62}
+.opt:disabled{cursor:default}
+.opt .mark{margin-left:auto;font-size:12px;font-weight:700}
+.opt.right .mark{color:var(--green)}
+.opt.wrongpick .mark{color:var(--red)}
+.feedback{min-height:26px;font-size:13.5px;font-weight:600;margin-top:14px}
+.feedback.ok{color:var(--green)}
+.feedback.no{color:var(--red)}
+.feedback .ans{color:#334155;font-weight:700}
+.qfoot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.jump{display:flex;align-items:center;gap:5px;margin-left:auto;font-size:12.5px;color:var(--muted)}
+.jump input{
+  width:74px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:13px;
+}
+.jump input:focus{outline:2px solid var(--blue-b);border-color:var(--blue)}
+.hint{font-size:12.5px;color:var(--muted)}
+
+/* ---------- 侧栏 ---------- */
+.side{padding:16px 18px;font-size:13px}
+.side h3{font-size:13px;letter-spacing:.4px;color:#475569;margin-bottom:10px}
+.pbar{height:8px;border-radius:999px;background:#eef2f7;overflow:hidden;margin:8px 0 10px}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#60a5fa);border-radius:999px;transition:width .3s}
+.kv{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #eef2f7;color:#475569}
+.kv:last-child{border-bottom:0}
+.kv b{color:#0f172a}
+.side .note{margin-top:12px;padding:10px 12px;background:var(--slate-bg);border-radius:10px;color:var(--muted);font-size:12px;line-height:1.6}
+
+/* ---------- 模考 ---------- */
+.testbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;
+  border-radius:var(--r);padding:14px 20px;margin-bottom:16px;box-shadow:0 10px 24px rgba(30,64,175,.25);
+}
+.testbar .ttl{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+.testbar .clock{
+  font-variant-numeric:tabular-nums;background:rgba(255,255,255,.16);
+  padding:3px 11px;border-radius:999px;font-size:13px;letter-spacing:.5px;
+}
+.testbar .prog{font-size:13px;opacity:.92}
+.testbar .sp{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.testbar .btn{background:rgba(255,255,255,.16);color:#fff}
+.testbar .btn:hover{background:rgba(255,255,255,.28)}
+.testbar .btn.submit{background:#fff;color:#1d4ed8;font-weight:700}
+.testbar .btn.submit:hover{background:#e8efff}
+
+/* ---------- 弹层 ---------- */
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(2px);z-index:80;display:none}
+.mask.show{display:block}
+.dialog{
+  position:fixed;z-index:90;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(1180px,94vw);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;
+  box-shadow:0 30px 80px rgba(15,23,42,.35);padding:24px 26px;display:none;
+}
+.dialog.show{display:block}
+.dialog h2{font-size:19px;margin-bottom:6px}
+.dialog .sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+.dialog .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.dialog .x{position:absolute;right:16px;top:12px;font-size:22px;color:#94a3b8;line-height:1}
+.dialog .x:hover{color:#0f172a}
+
+/* 答题卡 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:7px;margin-top:6px}
+.cell{
+  height:38px;border-radius:9px;border:1px solid var(--line);background:#fff;
+  font-size:12.5px;color:#475569;display:grid;place-items:center;transition:.12s;
+}
+.cell:hover{border-color:var(--blue-b);background:#f8fbff}
+.cell.done{background:var(--blue-l);border-color:var(--blue-b);color:var(--blue);font-weight:700}
+.cell.right{background:var(--green-bg);border-color:var(--green-bd);color:var(--green);font-weight:700}
+.cell.wrong{background:var(--red-bg);border-color:var(--red-bd);color:var(--red);font-weight:700}
+.cell.blank{background:#fff;color:#94a3b8}
+.cell.cur{outline:2px solid var(--blue);outline-offset:1px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:12px 0 4px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* 成绩单 */
+.scoreboard{display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  background:linear-gradient(135deg,#f8fbff,#eef4ff);border:1px solid #dbe7ff;
+  border-radius:14px;padding:16px 20px;margin:8px 0 16px}
+.scoreboard .big{display:flex;align-items:center;gap:3px;font-size:44px;font-weight:800;line-height:1;letter-spacing:-1px;white-space:nowrap}
+.scoreboard .big small{font-size:14px;font-weight:600;color:var(--muted)}
+.scoreboard .meta{font-size:13.5px;color:#334155;display:flex;gap:18px;flex-wrap:wrap}
+.scoreboard .meta span b{font-size:15px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600}
+.pill.r{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.pill.w{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+.pill.b{background:var(--slate-bg);color:#475569;border:1px solid var(--line)}
+
+.report-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 12px}
+.report-tools .sp{margin-left:auto}
+table.cmp{width:100%;border-collapse:collapse;font-size:13px}
+table.cmp th{
+  position:sticky;top:0;background:#f8fafc;z-index:2;text-align:left;font-weight:700;color:#475569;
+  padding:9px 8px;border-bottom:1.5px solid var(--line);white-space:nowrap;
+}
+table.cmp td{padding:9px 8px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+table.cmp tr.r td{background:#fbfefc}
+table.cmp tr.w td{background:#fffafa}
+table.cmp tr.b td{background:#fcfcfd}
+table.cmp td.mono{font-variant-numeric:tabular-nums;font-weight:700}
+table.cmp td.ans-ok{color:var(--green);font-weight:700}
+table.cmp td.ans-no{color:var(--red);font-weight:700}
+table.cmp td.ans-blank{color:#94a3b8}
+details.orig summary{cursor:pointer;color:var(--blue);font-size:12.5px;white-space:nowrap}
+details.orig summary:hover{text-decoration:underline}
+.origbox{margin-top:8px;background:var(--slate-bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:320px;max-width:640px}
+.origbox .o-stem{font-weight:600;line-height:1.7;margin-bottom:8px;white-space:normal}
+.origbox .o-stem mark{background:#fff3bf;color:#7c2d12;padding:0 2px;border-radius:3px;font-weight:800}
+.origbox ul{list-style:none;font-size:12.5px;color:#475569;line-height:1.7}
+.origbox li{padding:1px 0}
+.origbox li.ok{color:var(--green);font-weight:700}
+.origbox li.mine{background:var(--red-bg);border-radius:4px;padding-left:4px}
+.origbox .src{font-size:11.5px;color:var(--muted);margin-top:8px}
+
+/* 打印 */
+@media print{
+  body{background:#fff}
+  .topbar,.report-tools,.dialog .x,.mask,.testbar{display:none !important}
+  .dialog{position:static;transform:none;width:auto;max-height:none;box-shadow:none;display:block !important;padding:0}
+  table.cmp th{position:static}
+  details.orig{display:none}
+  .scoreboard{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">安</div>
+    <div>
+      <h1>安全防范系统安装维护员</h1>
+      <p>500 题练习 · 随机 100 题模考 · 交卷对照原题库</p>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <nav class="actions">
+    <button class="btn" data-mode="order" id="mOrder">顺序刷题</button>
+    <button class="btn" data-mode="shuffle" id="mShuffle">乱序刷题</button>
+    <button class="btn primary" id="btnTest">随机100题模考</button>
+    <button class="btn" id="btnWrong">错题重做</button>
+    <button class="btn" id="btnShowAll">显示全部答案</button>
+    <button class="btn danger" id="btnReset">重置</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ 练习 ============ -->
+  <section id="practiceView">
+    <div class="split">
+      <div class="card qcard">
+        <div class="qhead">
+          <span class="tag" id="pTag">单选题</span>
+          <span class="qindex" id="pIndex">第 1 / 500 题</span>
+          <span class="pdfref" id="pPdf"></span>
+        </div>
+        <p class="stem" id="pStem"></p>
+        <div class="opts" id="pOpts"></div>
+        <div class="feedback" id="pFeedback"></div>
+        <div class="qfoot">
+          <button class="btn ghost" id="pPrev">← 上一题</button>
+          <button class="btn ghost" id="pNext">下一题 →</button>
+          <button class="btn ghost hide" id="pConfirmMulti">确认答案</button>
+          <button class="btn ghost" id="pCard">答题卡</button>
+          <div class="jump">
+            <span>跳到题库题号</span>
+            <input id="pJump" type="number" min="1" max="500" inputmode="numeric" placeholder="1-500">
+            <button class="btn small" id="pJumpBtn">跳转</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="card side">
+        <h3>练习进度</h3>
+        <div id="pStats"></div>
+        <div class="pbar"><i id="pBar" style="width:0"></i></div>
+        <div class="kv"><span>题库总题数</span><b>500</b></div>
+        <div class="kv"><span>单选 / 多选 / 判断</span><b>300 / 70 / 130</b></div>
+        <div class="kv"><span>答案出处</span><b>原题库 PDF</b></div>
+        <div class="note">
+          题库与《智慧安防技术"工匠之星"职业技能竞赛初赛理论题库》一致；每题标注 PDF 页码，便于核对。
+          练习记录保存在本机浏览器，换浏览器或清缓存会丢失。
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost small" id="sideCard">打开答题卡</button>
+          <button class="btn ghost small hide" id="sideLast">上次模考成绩</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ 模考 ============ -->
+  <section id="testView" class="hide">
+    <div class="testbar">
+      <div class="ttl">随机 100 题模考</div>
+      <div class="clock" id="tClock">00:00</div>
+      <div class="prog" id="tProg">卷面第 1 / 100 题 · 已答 0</div>
+      <div class="sp">
+        <button class="btn" id="tCardBtn">答题卡</button>
+        <button class="btn submit" id="tSubmit">交 卷</button>
+        <button class="btn" id="tExit">退出模考</button>
+      </div>
+    </div>
+
+    <div class="split">
+      <div class="card qcard">
+        <div class="qhead">
+          <span class="tag" id="tTag">单选题</span>
+          <span class="qindex" id="tIndex">卷面第 1 题 · 题库第 1 题</span>
+          <span class="pdfref" id="tPdf"></span>
+        </div>
+        <p class="stem" id="tStem"></p>
+        <div class="opts" id="tOpts"></div>
+        <div class="feedback" id="tFeedback"></div>
+        <div class="qfoot">
+          <button class="btn ghost" id="tPrev">← 上一题</button>
+          <button class="btn ghost" id="tNext">下一题 →</button>
+          <button class="btn ghost hide" id="tReportBtn">查看成绩单</button>
+          <div class="jump">
+            <span>跳到卷面第</span>
+            <input id="tJump" type="number" min="1" max="100" inputmode="numeric" placeholder="1-100">
+            <span>题</span>
+            <button class="btn small" id="tJumpBtn">跳转</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="card side">
+        <h3>模考须知</h3>
+        <div class="kv"><span>题量</span><b>100 题（随机不重复）</b></div>
+        <div class="kv"><span>计时</span><b id="tElapsed">00:00</b></div>
+        <div class="kv"><span>已答</span><b id="tDone">0</b></div>
+        <div class="kv"><span>未答</span><b id="tBlank">100</b></div>
+        <div class="note">
+          交卷后逐题列出：你的答案、题库正确答案、原题库题面（答案已标注）与 PDF 页码，
+          可直接与 PDF 对照核验。未作答的题目单独计为「未答」，不计入答错。
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</div>
+
+<div class="mask" id="mask"></div>
+<div class="dialog" id="dialog"></div>
+
+<script id="bank" type="application/json">[{"n":1,"section":"single","q":"在进行安全防范系统维护时，（）是职业道德要求。","o":["A、故意制造系统故障以增加维修费用","B、严格遵守操作规程，确保系统稳定","C、私自使用客户设备进行个人活动","D、随意向他人透露客户信息"],"a":"B","p":1},{"n":2,"section":"single","q":"对于安全防范系统安装维护员来说，安全至上的职业道德体现在（）。","o":["A、忽视安全规定，以节省时间","B、随意透露系统漏洞给第三方","C、严格遵守安全操作规程","D、忽视客户提出的安全需求"],"a":"C","p":1},{"n":3,"section":"single","q":"（）符合安全防范系统安装维护员精益求精的职业道德要求。","o":["A、不断学习新知识，提升技能水平","B、忽视技术更新，坚持使用旧方法","C、对待工作粗心大意，不求甚解","D、满足于现状，不愿接受新挑战"],"a":"A","p":1},{"n":4,"section":"single","q":"对于安全防范系统安装维护员来说，（）行为符合爱岗敬业的职业道德要求。","o":["A、消极怠工，对待工作不负责任","B、热爱本职工作，尽职尽责","C、无视工作规程，随意施工","D、频繁请假，影响工作进度"],"a":"B","p":1},{"n":5,"section":"single","q":"在进行安全防范系统维护时，（）不是安全防范系统安装维护员的职责。","o":["A、检查设备运行状态","B、更换损坏的部件","C、设计新的安全系统","D、清理设备上的灰尘"],"a":"C","p":2},{"n":6,"section":"single","q":"安全防范系统安装维护员在进行系统升级时，应优先考虑（）。","o":["A、升级速度","B、系统稳定性","C、新功能数量","D、升级成本"],"a":"B","p":2},{"n":7,"section":"single","q":"在社会主义核心价值观中，诚信对安全防范系统安装维护员而言，主要体现在（）。","o":["A、隐瞒系统存在的安全隐患","B、随意夸大系统性能，误导客户","C、对客户提出的问题推诿扯皮","D、如实反映系统情况，不欺骗客户"],"a":"D","p":2},{"n":8,"section":"single","q":"安全防范系统安装维护员爱岗敬业的首要表现是（）。","o":["A、热爱本职工作，全身心投入","B、追求个人利益最大化","C、对工作敷衍塞责，不负责任","D、经常迟到早退，工作态度消极"],"a":"A","p":2},{"n":9,"section":"single","q":"安全防范系统安装维护员在爱岗敬业方面，做到（）可以提升自己的专业技能。","o":["A、满足于现状，不思进取","B、忽视新知识的学习和应用","C、抵触技术更新，坚守传统方式","D、积极学习新技术，不断提升自己"],"a":"D","p":3},{"n":10,"section":"single","q":"在处理安防系统故障时，安装维护员要做到（）。","o":["A、推诿责任","B、等待客户自行处理","C、迅速响应，积极解决","D、忽视问题，不予处理"],"a":"C","p":3},{"n":11,"section":"single","q":"（）不是安全防范系统安装维护员的职业守则要求。","o":["A、追求个人利益最大化","B、诚实守信","C、保护客户隐私","D、提供优质服务"],"a":"A","p":3},{"n":12,"section":"single","q":"在执行安全防范系统安装任务时，安装维护员应（）。","o":["A、随意更改安装标准","B、严格按照标准执行","C、忽视系统稳定性","D、简化安装步骤以节省时间"],"a":"B","p":3},{"n":13,"section":"single","q":"在安全防范系统中，（）通信技术可以实现设备的互联互通和远程监控。","o":["A、无线通信","B、有线通信","C、卫星通信","D、模拟信号通信"],"a":"B","p":3},{"n":14,"section":"single","q":"在安全防范系统中，（）电工工具用于检测电路中的电流大小。","o":["A、电流表","B、电压表","C、示波器","D、兆欧表"],"a":"A","p":4},{"n":15,"section":"single","q":"安全防范系统中，用于隔离不同电压等级的电路元件是（）。","o":["A、保险丝","B、继电器","C、变压器","D、开关"],"a":"C","p":4},{"n":16,"section":"single","q":"安全防范系统的报警信息通常通过（）协议传输到管理中心。","o":["A、HTTP","B、TCP/IP","C、SNMP","D、SIP"],"a":"B","p":4},{"n":17,"section":"single","q":"在安全防范系统的网络架构中，（）网络设备用于连接不同网段的设备，实现数据的转发。","o":["A、交换机","B、路由器","C、防火墙","D、服务器"],"a":"B","p":4},{"n":18,"section":"single","q":"安全防范系统的核心目的是（）。","o":["A、提高工作效率","B、节省能源","C、保障人员和财产安全","D、增加美观度"],"a":"C","p":4},{"n":19,"section":"single","q":"安全防范系统通常不包括（）功能。","o":["A、视频监控","B、入侵报警","C、门禁控制","D、家庭娱乐"],"a":"D","p":5},{"n":20,"section":"single","q":"在安全防范系统中，报警功能的主要作用是（）。","o":["A、提供娱乐内容","B、监控员工行为","C、实时通知安全事件","D、记录温度变化"],"a":"C","p":5},{"n":21,"section":"single","q":"安全防范系统中最基本的构成部分通常不包括（）。","o":["A、视频监控系统","B、入侵报警系统","C、门禁控制系统","D、消防报警系统"],"a":"D","p":5},{"n":22,"section":"single","q":"（）子系统是安全防范系统中用于实时记录现场情况的重要构成部分。","o":["A、入侵报警系统","B、门禁控制系统","C、视频监控系统","D、环境监测系统"],"a":"C","p":5},{"n":23,"section":"single","q":"安全防范系统工程施工质量检验时，对设备安装的稳定性主要关注（）方面。","o":["A、设备外观的完好性","B、设备功能的完整性","C、设备安装位置的准确性","D、设备固定件的牢固性"],"a":"D","p":5},{"n":24,"section":"single","q":"安全防范系统工程施工质量检验中，对报警系统的响应时间有何具体要求（）。","o":["A、越长越好","B、越短越好","C、不超过规定时间","D、根据用户要求而定"],"a":"C","p":6},{"n":25,"section":"single","q":"视频监控系统的主要功能是（）。","o":["A、探测入侵者","B、监控目标区域","C、记录温度变化","D、阻止火灾发生"],"a":"B","p":6},{"n":26,"section":"single","q":"视频监控系统中，PTZ摄像头的主要特点是（）。","o":["A、固定位置","B、可旋转和缩放","C、只能录像","D、只能拍照"],"a":"B","p":6},{"n":27,"section":"single","q":"网络型出入口控制系统与单机型的主要区别是（）。","o":["A、安装位置不同","B、控制方式不同","C、锁的类型不同","D、显示方式不同"],"a":"B","p":6},{"n":28,"section":"single","q":"停车库（场）管理系统中，用于识别车辆身份的设备通常是（）。","o":["A、读卡器","B、摄像头","C、车辆检测器","D、红外感应器"],"a":"B","p":7},{"n":29,"section":"single","q":"电子巡查系统通过（）确定巡查人员的位置。","o":["A、通过GPS定位","B、通过读卡器读取位置信息","C、通过巡查棒打点记录","D、通过视频画面识别"],"a":"C","p":7},{"n":30,"section":"single","q":"防爆安全检查系统中，用于报警和提示的设备是（）。","o":["A、显示器","B、探测器","C、报警器","D、打印机"],"a":"C","p":7},{"n":31,"section":"single","q":"（）不是智能分析系统在安全防范中的应用。","o":["A、人脸识别","B、行为分析","C、语音转换","D、视频内容过滤"],"a":"C","p":7},{"n":32,"section":"single","q":"在施工现场，施工人员必须佩戴的安全防护用品不包括（）。","o":["A、安全帽","B、防护眼镜","C、手套","D、便鞋"],"a":"D","p":7},{"n":33,"section":"single","q":"在施工现场，需要（）确保挖掘作业的安全。","o":["A、无须任何措施","B、随意挖掘","C、按照挖掘方案和安全规范进行","D、多人同时挖掘"],"a":"C","p":8},{"n":34,"section":"single","q":"施工图纸中的标注尺寸通常表示（）。","o":["A、估计尺寸","B、实际施工尺寸","C、最大允许尺寸","D、最小允许尺寸"],"a":"B","p":8},{"n":35,"section":"single","q":"防护栏杆的安装高度通常应不低于（）。","o":["A、0.8米","B、1.0米","C、1.2米","D、1.5米"],"a":"C","p":8},{"n":36,"section":"single","q":"对于实体防护系统设施的验收，应重点关注（）方面。","o":["A、美观程度","B、安装速度","C、功能完整性","D、材料成本"],"a":"C","p":8},{"n":37,"section":"single","q":"《中华人民共和国反恐怖主义法》中，对于涉及恐怖活动的信息，应当（）。","o":["A、公开传播","B、私自保存","C、及时报告","D、随意丢弃"],"a":"C","p":8},{"n":38,"section":"single","q":"根据《中华人民共和国个人信息保护法》，处理个人信息应当遵循（）原则。","o":["A、合法、正当、必要","B、随意、方便、快捷","C、高效、透明、共享","D、公平、公开、公正"],"a":"A","p":9},{"n":39,"section":"single","q":"关于网络安全责任，（）描述是正确的。","o":["A、网络运营者无需承担任何责任","B、网络使用者应对网络安全负全责","C、网络运营者应当按照法律、行政法规的规定和网络安全等级保护制度的要求，履行相关安全保护义务","D、网络安全仅与政府机构相关"],"a":"C","p":9},{"n":40,"section":"single","q":"供电设备通电时，操作开关需要（）。","o":["A、快速合上","B、缓慢合上","C、多次开关","D、随意操作"],"a":"B","p":9},{"n":41,"section":"single","q":"在通电过程中，若发现异常，需要（）。","o":["A、立即断电","B、继续观察","C、增加电压","D、忽略异常"],"a":"A","p":9},{"n":42,"section":"single","q":"在测试供电设备的负载能力时，通常选择（）比例的负载进行测试。","o":["A、0.5","B、0.75","C、1","D、1.25"],"a":"D","p":9},{"n":43,"section":"single","q":"室外供电设备的安全防护等级通常要求达到（）标准。","o":["A、IP20","B、IP35","C、IP65","D、IP50"],"a":"C","p":10},{"n":44,"section":"single","q":"供电设备的输出电压波动范围应控制在（）以内。","o":["A、±5%","B、±10%","C、±15%","D、±20%"],"a":"A","p":10},{"n":45,"section":"single","q":"显示设备通电前，应先检查（）。","o":["A、视频信号线","B、电源线","C、网线","D、串口线"],"a":"B","p":10},{"n":46,"section":"single","q":"机柜通电测试时，其正常工作的温度范围应为（）。","o":["A、0°C~20°C","B、10°C~30°C","C、20°C~40°C","D、30°C~50°C"],"a":"C","p":10},{"n":47,"section":"single","q":"机柜的标准电源输入电压为（）伏。","o":["A、110V","B、220V","C、380V","D、440V"],"a":"B","p":10},{"n":48,"section":"single","q":"机柜通电时，散热风扇的转速应达到（）转/分钟。","o":["A、500","B、1000","C、1500","D、2000"],"a":"C","p":11},{"n":49,"section":"single","q":"监控中心视频编解码器通电时，应使用（）类型的电源线。","o":["A、三芯电源线","B、两芯电源线","C、USB线","D、HDMI线"],"a":"A","p":11},{"n":50,"section":"single","q":"监控中心报警主机的通电方法与其他设备不同的地方是（）。","o":["A、需额外接地","B、需使用专用电源","C、无需电源线","D、需先设置报警参数"],"a":"B","p":11},{"n":51,"section":"single","q":"网络交换机通电测试时，数据包转发率应达到（）。","o":["A、0.9","B、0.95","C、0.98","D、1"],"a":"C","p":11},{"n":52,"section":"single","q":"视频编解码器通电要求中，工作电压应在（）范围内。","o":["A、AC220V±5%","B、DC12V±10%","C、AC110V±10%","D、DC24V±5%"],"a":"A","p":11},{"n":53,"section":"single","q":"报警主机通电要求中，备用电源持续时间应不少于（）小时。","o":["A、12小时","B、6小时","C、8小时","D、4小时"],"a":"C","p":12},{"n":54,"section":"single","q":"摄像头通电测试时，应使用（）设备检测图像质量。","o":["A、示波器","B、万用表","C、监视器","D、电阻器"],"a":"C","p":12},{"n":55,"section":"single","q":"报警按钮通电测试时，其响应时间应不超过（）毫秒。","o":["A、50ms","B、100ms","C、200ms","D、500ms"],"a":"B","p":12},{"n":56,"section":"single","q":"视频监控系统前端设备通电时，供电稳定性要求达到（）以上。","o":["A、0.9","B、0.85","C、0.98","D、0.99"],"a":"C","p":12},{"n":57,"section":"single","q":"在为智能门禁系统前端设备通电时，应使用（）电源类型。","o":["A、直流电源","B、交流电源","C、脉冲电源","D、混合电源"],"a":"A","p":13},{"n":58,"section":"single","q":"巡更系统中的信息钮通电时，需要特别注意（）。","o":["A、工作电流","B、存储容量","C、通信频率","D、响应时间"],"a":"A","p":13},{"n":59,"section":"single","q":"在对安全防范系统前端设备进行通电测试时，通常使用（）工具来检测电源质量。","o":["A、万用表","B、螺丝刀","C、锤子","D、摄像头"],"a":"A","p":13},{"n":60,"section":"single","q":"出入口控制系统电动门机通电时，电机功率一般不超过（）W。","o":["A、50W","B、200W","C、500W","D、1000W"],"a":"B","p":13},{"n":61,"section":"single","q":"门禁系统读卡器通电时，其工作电压应为（）V。","o":["A、5V","B、12V","C、24V","D、36V"],"a":"B","p":13},{"n":62,"section":"single","q":"可以通过（）确定前端设备的最大工作距离。","o":["A、查阅设备说明","B、识别图纸中的标注","C、询问设计师","D、观察设备外观"],"a":"A","p":14},{"n":63,"section":"single","q":"前端设备防护目标的覆盖范围主要取决于（）参数。","o":["A、设备高度","B、探测角度","C、安装位置","D、工作电压"],"a":"B","p":14},{"n":64,"section":"single","q":"可以通过（）用来调整前端设备的安装高度来改变其覆盖范围。","o":["A、增加或减少安装支架","B、更换设备型号","C、调整工作电压","D、更换电源线"],"a":"A","p":14},{"n":65,"section":"single","q":"对于大范围监控，前端设备防护目标的覆盖要求通常涉及（）。","o":["A、无死角覆盖","B、单点覆盖","C、局部覆盖","D、特定区域覆盖"],"a":"A","p":14},{"n":66,"section":"single","q":"在调整入侵报警系统前端设备的探测范围时，应首先调整（）。","o":["A、报警延时","B、探测角度","C、工作电压","D、灵敏度"],"a":"D","p":14},{"n":67,"section":"single","q":"在确保探测效果的前提下，为减少盲区，应（）调整入侵报警系统前端设备。","o":["A、降低探测灵敏度","B、增加设备数量","C、提高报警音量","D、改变设备型号"],"a":"B","p":15},{"n":68,"section":"single","q":"入侵报警系统前端设备的误报率与（）参数的设置最为相关。","o":["A、探测角度","B、灵敏度阈值","C、设备型号","D、工作温度"],"a":"B","p":15},{"n":69,"section":"single","q":"若要提高视频监控系统前端设备的夜视效果，应（）。","o":["A、降低镜头焦距","B、增加曝光时间","C、减小图像分辨率","D、调整压缩格式"],"a":"B","p":15},{"n":70,"section":"single","q":"对于室外环境的视频监控系统前端设备，可以（）以减少风吹的影响。","o":["A、调整镜头焦距","B、增设防抖装置","C、增加曝光时间","D、降低图像分辨率"],"a":"B","p":15},{"n":71,"section":"single","q":"调整视频监控系统前端设备防护目标的调整中，（）参数影响夜视效果。","o":["A、镜头光圈大小","B、图像色彩","C、压缩算法","D、传输协议"],"a":"A","p":15},{"n":72,"section":"single","q":"为提高出入口控制系统前端设备的识别速度，应优先调整（）。","o":["A、处理器速度","B、识别算法","C、摄像头分辨率","D、传输速率"],"a":"B","p":16},{"n":73,"section":"single","q":"可以通过（）来增强出入口控制系统前端设备的稳定性。","o":["A、增大电源功率","B、更换高灵敏度传感器","C、优化识别算法","D、调整安装角度"],"a":"C","p":16},{"n":74,"section":"single","q":"车牌识别系统在夜间识别率明显下降，应优先检查（）。","o":["A、补光灯照射角度及亮度是否满足要求","B、车牌识别算法版本","C、网络带宽是否充足","D、显示器分辨率设置"],"a":"A","p":16},{"n":75,"section":"single","q":"可以（）来提高停车场管理系统前端设备的识别率。","o":["A、调整识别阈值","B、增大安装角度","C、更换显示屏","D、增大电源功率"],"a":"A","p":16},{"n":76,"section":"single","q":"可以通过（）来适应不同车型在停车场管理系统中的识别需求。","o":["A、调整识别阈值","B、增大安装角度","C、更换摄像头","D、增大电源功率"],"a":"C","p":17},{"n":77,"section":"single","q":"停车场管理系统前端设备在恶劣天气下稳定性不佳，应（）用来调整防护目标。","o":["A、增大识别距离","B、调整识别算法","C、加强电磁屏蔽","D、增强防水防尘性能"],"a":"D","p":17},{"n":78,"section":"single","q":"电子巡查系统前端设备防护目标的调整方法中，可以（）以确保准确识别。","o":["A、增大信号强度","B、减小感应范围","C、调整安装高度","D、增大电源电压"],"a":"A","p":17},{"n":79,"section":"single","q":"为提高电子巡查系统前端设备的识别速度，应（）。","o":["A、增大感应范围","B、增大电源电压","C、优化识别算法","D、减小安装高度"],"a":"C","p":17},{"n":80,"section":"single","q":"电子巡查系统前端设备防护目标的调整要求中，对于抗干扰能力的要求是（）。","o":["A、越强越好","B、越弱越好","C、无要求","D、适中即可"],"a":"A","p":17},{"n":81,"section":"single","q":"出入口控制系统中，除标准设备外，可以通过（）来调整前端设备以提高识别准确率。","o":["A、增大识别范围","B、减小识别时间","C、优化识别算法","D、增大噪声抑制"],"a":"C","p":18},{"n":82,"section":"single","q":"在调整前端设备防护目标时，可以通过（）平衡设备的功耗与性能。","o":["A、增大功耗","B、减小性能","C、优化功耗管理算法","D、增大噪声抑制"],"a":"C","p":18},{"n":83,"section":"single","q":"在调整其他前端设备防护目标时，对于设备功耗的要求通常是（）。","o":["A、越低越好","B、越高越好","C、无明确要求","D、根据实际需求确定"],"a":"D","p":18},{"n":84,"section":"single","q":"监控中心供电设备复核时，对于UPS的输出电压，应确保其在（）范围内。","o":["A、200V-240V","B、210V-230V","C、220V±10%","D、240V±5%"],"a":"C","p":18},{"n":85,"section":"single","q":"UPS在市电中断后，电池组应能维持满载供电不少于（）分钟。","o":["A、5分钟","B、15分钟","C、30分钟","D、60分钟"],"a":"C","p":18},{"n":86,"section":"single","q":"监控中心机柜安装调整复核时，应检查机柜前后门开启角度至少为（）度。","o":["A、90°","B、120°","C、180°","D、270°"],"a":"A","p":19},{"n":87,"section":"single","q":"监控中心视频记录设备安装调整的复核中，应确保录像分辨率不低于（）P。","o":["A、480","B、720","C、1080","D、2160"],"a":"C","p":19},{"n":88,"section":"single","q":"复核监控中心门禁系统时，应确保门禁响应时间不超过（）秒。","o":["A、0.5","B、1","C、1.5","D、2"],"a":"B","p":19},{"n":89,"section":"single","q":"在复核入侵报警系统前端探测器时，应检查其探测范围至少为（）米。","o":["A、5","B、10","C、15","D、20"],"a":"B","p":19},{"n":90,"section":"single","q":"复核电子巡查系统前端巡查点标识时，应保证其清晰度至少达到（）DPI。","o":["A、100","B、200","C、300","D、400"],"a":"C","p":19},{"n":91,"section":"single","q":"复核说明报告中关于设备调整的部分应（）。","o":["A、简要提及调整情况","B、详细描述调整步骤","C、列出调整前后的对比数据","D、不需要描述调整情况"],"a":"B","p":20},{"n":92,"section":"single","q":"复核说明报告中前端设备清单的排序原则是（）。","o":["A、按价格从高到低","B、按安装时间从早到晚","C、按设备类型分类","D、无固定要求"],"a":"C","p":20},{"n":93,"section":"single","q":"在前端设备安装调整复核说明中，对于设备兼容性的评估，主要依据是（）。","o":["A、设备品牌","B、设备型号","C、设备接口标准","D、设备价格"],"a":"C","p":20},{"n":94,"section":"single","q":"前端设备安装调整完成后，进行复核的主要目的是（）。","o":["A、节约成本","B、美观装饰","C、确保性能稳定","D、加快施工进度"],"a":"C","p":20},{"n":95,"section":"single","q":"复核方法中，可以通过（）确认监控中心设备与前端设备的通信正常。","o":["A、观察设备指示灯","B、测试数据传输速度","C、检查设备是否发热","D、询问设备供应商"],"a":"A","p":21},{"n":96,"section":"single","q":"监控中心设备接入连接调整的复核中，对于数据传输稳定性的要求是（）。","o":["A、无明显丢包即可","B、允许偶尔延迟","C、必须稳定无中断","D、无特定要求"],"a":"C","p":21},{"n":97,"section":"single","q":"监控中心设备接入连接调整的复核要求中，可以通过（）以确保设备安全稳定运行。","o":["A、频繁重启设备","B、增加设备数量","C、定期检查维护","D、无需任何措施"],"a":"C","p":21},{"n":98,"section":"single","q":"监控中心设备编号修改调整复核过程中，通过（）验证设备编号与记录的一致性。","o":["A、对比设备标签与档案","B、观察设备指示灯","C、测试设备通信","D、无需验证"],"a":"A","p":21},{"n":99,"section":"single","q":"监控中心设备编号修改调整的复核要求中，首要关注的是（）。","o":["A、编号的唯一性","B、设备的功能性","C、修改的便捷性","D、编号的美观性"],"a":"A","p":21},{"n":100,"section":"single","q":"复核监控中心设备编号修改调整时，应（）确保编号的连续性。","o":["A、忽略历史记录","B、逐一核对编号","C、随意更换编号","D、不需考虑连续性"],"a":"B","p":22},{"n":101,"section":"single","q":"中心设备连接时，不是必须考虑的因素是（）。","o":["A、设备的电源需求","B、设备的通信协议","C、设备的颜色与外观","D、设备的信号传输质量"],"a":"C","p":22},{"n":102,"section":"single","q":"关于监控中心设备接入后的复核工作，描述错误的是（）。","o":["A、应检查设备是否正常运行","B、应核对设备与编号是否一致","C、无需测试信号传输质量，因为设备自检会完成","D、应记录复核结果以备后续查阅"],"a":"C","p":22},{"n":103,"section":"single","q":"前端设备连接调整过程中，通过（）确保设备IP地址不冲突。","o":["A、逐一设置设备IP","B、使用自动分配IP功能","C、忽略IP冲突提示","D、不设置IP地址"],"a":"A","p":22},{"n":104,"section":"single","q":"对于视频监控系统，复核前端设备接入连接时，应确保（）。","o":["A、画面清晰","B、报警准确","C、电源稳定","D、安装位置正确"],"a":"A","p":22},{"n":105,"section":"single","q":"在复核前端设备接入连接时，（）不是必须检查的内容。","o":["A、设备型号","B、端口状态","C、接线方式","D、设备位置"],"a":"A","p":23},{"n":106,"section":"single","q":"前端设备编号修改后，复核时应核对（）以确保准确性。","o":["A、系统图、设备清单","B、巡检报告、报警记录","C、操作手册、用户反馈","D、设备说明书、安装图纸"],"a":"A","p":23},{"n":107,"section":"single","q":"设备编号修改完成后，应首先（）。","o":["A、立即投入使用","B、通知所有施工人员口头告知","C、更新设备台账及竣工图纸中的编号记录","D、等待下次定期维护时统一更新"],"a":"C","p":23},{"n":108,"section":"single","q":"复核说明报告中的复核结论部分应（）。","o":["A、简要概述复核结果","B、详细描述复核过程","C、列出所有设备型号","D、分析设备性能"],"a":"A","p":23},{"n":109,"section":"single","q":"复核前端设备接入连接时，因为（）所以需要核对设备清单。","o":["A、确保设备齐全","B、提高安装速度","C、减少故障率","D、美化系统图"],"a":"A","p":23},{"n":110,"section":"single","q":"在前端设备编号修改调整复核说明报告中，首先要明确的是（）。","o":["A、修改背景","B、修改后的设备功能","C、修改时间","D、修改人员名单"],"a":"A","p":24},{"n":111,"section":"single","q":"设置监控中心显示设备亮度时，应（）。","o":["A、在设备菜单中直接输入亮度值","B、使用遥控器调节","C、通过软件界面滑动条调节","D、无需特别设置"],"a":"C","p":24},{"n":112,"section":"single","q":"操作设备预设点的设置通常涉及（）。","o":["A、只需输入预设点名称","B、选择监控点并保存位置","C、无需设置","D、更换设备硬件"],"a":"B","p":24},{"n":113,"section":"single","q":"操作设备的巡航速度设置要求中，应考虑（）。","o":["A、只考虑操作员习惯","B、操作员习惯与监控区域大小","C、只考虑监控区域大小","D、无需特别考虑"],"a":"B","p":24},{"n":114,"section":"single","q":"视频分析设备的误报率过高应该（）。","o":["A、更换设备硬件","B、调整设备角度","C、在设备菜单中调整误报阈值","D、无需调整"],"a":"C","p":25},{"n":115,"section":"single","q":"应急照明设备的亮度调整通常在（）进行。","o":["A、设备内部菜单","B、设备底部","C、设备外壳上","D、使用遥控器"],"a":"A","p":25},{"n":116,"section":"single","q":"对门禁系统中的电磁锁一般进行（）调试。","o":["A、调整锁舌长度","B、调整锁体位置","C、设置合适的锁闭时间","D、更换电磁锁"],"a":"C","p":25},{"n":117,"section":"single","q":"使用（）来调整视频分析设备的运动检测灵敏度。","o":["A、更改设备内置参数","B、升级设备固件","C、更换设备型号","D、无需调整"],"a":"A","p":25},{"n":118,"section":"single","q":"在设置前端设备的通信协议时，通常要考虑（）因素。","o":["A、设备兼容性","B、美观度","C、价格","D、安装位置"],"a":"A","p":25},{"n":119,"section":"single","q":"前端设备的抗干扰能力主要影响（）方面的性能。","o":["A、清晰度","B、稳定性","C、灵敏度","D、分辨率"],"a":"B","p":26},{"n":120,"section":"single","q":"存储设备的容量检验中，（）不属于必要检验内容。","o":["A、存储容量","B、读写速度","C、数据安全性","D、设备外观"],"a":"D","p":26},{"n":121,"section":"single","q":"录像存储设备的数据传输速度检验，通常使用（）方法。","o":["A、读取文件大小","B、观看视频流畅度","C、网络带宽测试","D、写入测试数据"],"a":"D","p":26},{"n":122,"section":"single","q":"监控中心UPS不间断电源的容量检验，应考虑（）。","o":["A、负载设备的总功率","B、负载设备的数量","C、负载设备的品牌","D、负载设备的颜色"],"a":"A","p":26},{"n":123,"section":"single","q":"UPS不间断电源的供电能力应使用（）来检测。","o":["A、带载测试","B、仅检查外观","C、测量输出电压","D、检查设备型号"],"a":"A","p":26},{"n":124,"section":"single","q":"监控中心防雷设备接地电阻的检验应使用（）。","o":["A、接地电阻测试仪","B、电流表","C、电压表","D、示波器"],"a":"A","p":27},{"n":125,"section":"single","q":"停车场管理系统车牌识别相机识别率检验时，应（）。","o":["A、直接观察车牌","B、使用不同车牌测试","C、查阅说明书","D、测量相机尺寸"],"a":"B","p":27},{"n":126,"section":"single","q":"应急报警系统检验时，需重点关注（）。","o":["A、报警响应时间","B、系统功耗","C、设备尺寸","D、报警声音大小"],"a":"A","p":27},{"n":127,"section":"single","q":"检验周界报警系统探测器安装高度时，通常使用（）工具。","o":["A、卷尺","B、水平尺","C、角度尺","D、电流表"],"a":"A","p":27},{"n":128,"section":"single","q":"在进行前端设备参数设置前，首先需要做的工作是（）。","o":["A、查看系统手册","B、购买新设备","C、通知客户","D、备份原参数"],"a":"D","p":27},{"n":129,"section":"single","q":"监控中心显示设备参数设置调整后，复核的首要步骤是（）。","o":["A、检查显示设备外观","B、核对参数设置文档","C、重新启动显示设备","D、询问操作员感受"],"a":"B","p":28},{"n":130,"section":"single","q":"在复核操作设备时，记录操作日志是因为（）。","o":["A、便于日后查询","B、美观设备外观","C、增加设备功能","D、减少设备故障"],"a":"A","p":28},{"n":131,"section":"single","q":"复核报警控制主机参数设置时，应（）以验证报警信号的准确性。","o":["A、重启设备测试","B、询问操作员","C、查阅报警记录","D、使用测试工具模拟报警"],"a":"D","p":28},{"n":132,"section":"single","q":"在复核公共广播系统设备参数设置时，（）是必要步骤。","o":["A、询问操作员感受","B、检查设备功率","C、播放测试音频","D、观察设备指示灯"],"a":"C","p":28},{"n":133,"section":"single","q":"复核防雷接地系统时，（）步骤不是必要的。","o":["A、检查接地电阻","B、核对设备型号","C、测试防雷器件","D、询问操作员感受"],"a":"D","p":28},{"n":134,"section":"single","q":"在复核入侵报警系统时，（）参数设置最为关键。","o":["A、报警延时","B、报警音量","C、防区划分","D、信号传输方式"],"a":"C","p":29},{"n":135,"section":"single","q":"复核安全防范系统参数时，若发现报警信号误报频繁，首先应该检查（）。","o":["A、报警设备灵敏度","B、报警设备电源","C、报警设备位置","D、报警设备连接线"],"a":"A","p":29},{"n":136,"section":"single","q":"前端设备复核过程中，若发现设备性能参数不符合要求，应（）。","o":["A、直接更换设备","B、忽略不处理","C、调整参数或维修","D、报告领导"],"a":"C","p":29},{"n":137,"section":"single","q":"在复核车辆管理系统时，使用（）以确保车牌识别摄像机的识别准确性。","o":["A、检查摄像机镜头","B、调整车牌识别算法参数","C、更换车牌","D、清洗车辆"],"a":"B","p":29},{"n":138,"section":"single","q":"对于公共广播系统的复核，使用（）方法来测试扬声器的音量平衡性。","o":["A、测试信号源","B、更换扬声器","C、调整功放功率","D、检查线路连接"],"a":"A","p":29},{"n":139,"section":"single","q":"复核车辆管理系统时，对于车牌识别率的参数，复核标准是（）。","o":["A、识别率越高越好","B、识别率越低越好","C、识别率不影响通行效率","D、识别率符合设计要求"],"a":"D","p":30},{"n":140,"section":"single","q":"在撰写中心设备通用参数设置调整复核说明报告时，（）内容不是必需的。","o":["A、报告标题","B、复核人员签名","C、复核设备型号列表","D、复核环境照片"],"a":"D","p":30},{"n":141,"section":"single","q":"中心设备参数复核说明报告中的参数设置范围，应（）。","o":["A、列出所有可能的参数范围","B、仅列出本次调整的参数范围","C、无需列出参数范围","D、列出标准参数范围"],"a":"D","p":30},{"n":142,"section":"single","q":"在中心设备通用参数设置调整复核说明报告中，对于调整后的参数值，应（）。","o":["A、记录调整后的最终值","B、记录调整前后的对比值","C、无需记录调整后的值","D、记录调整过程中的所有值"],"a":"A","p":30},{"n":143,"section":"single","q":"撰写前端设备通用参数设置调整复核说明报告时提及的参数设置范围应（）。","o":["A、列出所有可能的范围","B、列出本次调整的范围","C、无需列出范围","D、列出标准范围"],"a":"D","p":30},{"n":144,"section":"single","q":"（）不属于中心设备的设置与调整。","o":["A、更改录像分辨率","B、设置报警阈值","C、更换硬盘","D、调整画面亮度"],"a":"C","p":31},{"n":145,"section":"single","q":"查询与筛选类别中，（）操作不是常用的。","o":["A、日期筛选","B、用户筛选","C、录像格式筛选","D、报警类型筛选"],"a":"C","p":31},{"n":146,"section":"single","q":"视频监控系统实时显示功能支持多画面同时显示时，通常通过（）技术实现多画面的切换与调整。","o":["A、数字矩阵切换","B、模拟信号转换","C、单一画面锁定","D、网络流媒体传输"],"a":"A","p":31},{"n":147,"section":"single","q":"在记录查询操作中，应该（）来定位特定摄像头的录像。","o":["A、使用时间筛选","B、使用摄像头筛选","C、调整监控角度","D、更改录像分辨率"],"a":"B","p":31},{"n":148,"section":"single","q":"在记录查询中，用（）导出选定的录像文件。","o":["A、通过实时显示界面","B、在查询结果中选择导出","C、更换摄像头","D、调整录像格式"],"a":"B","p":32},{"n":149,"section":"single","q":"在准备实时显示资料时，（）内容不是必需的。","o":["A、摄像头配置信息","B、用户操作日志","C、实时显示软件","D、中心设备连接图"],"a":"B","p":32},{"n":150,"section":"single","q":"对于入侵报警子系统，使用（）来查询特定时间段内的报警记录。","o":["A、通过报警软件筛选日期","B、调整监控画面","C、在报警记录中查询","D、更换存储设备"],"a":"A","p":32},{"n":151,"section":"single","q":"在门禁子系统中，实时显示门禁状态需要（）。","o":["A、调整门禁角度","B、在报警监控软件中查看","C、在门禁管理软件中查看","D、重启门禁服务器"],"a":"C","p":32},{"n":152,"section":"single","q":"实时显示门禁子系统时，对门禁状态更新的频率的要求是（）。","o":["A、实时更新","B、每分钟更新一次","C、每小时更新一次","D、每天更新一次"],"a":"A","p":32},{"n":153,"section":"single","q":"在公共广播系统中，只要（）就能查询历史播放记录。","o":["A、在广播管理软件中检索","B、手动记录播放内容","C、询问播音员","D、更换播放器"],"a":"A","p":33},{"n":154,"section":"single","q":"对于公共安全广播系统，实时显示当前播放状态可以通过（）。","o":["A、询问广播操作员","B、监听扬声器输出","C、在广播控制软件上查看","D、检查广播设备"],"a":"C","p":33},{"n":155,"section":"single","q":"查询安全防范系统记录时，对查询人员的资质要求是（）。","o":["A、无特殊要求","B、必须为系统管理员","C、需具备相关权限","D、任何人员均可"],"a":"C","p":33},{"n":156,"section":"single","q":"实时显示安全防范系统信息时，通过（）确保数据的准确性。","o":["A、仅依赖系统显示","B、人工核对数据","C、无需特别处理","D、随意修改数据"],"a":"B","p":33},{"n":157,"section":"single","q":"安全防范系统记录查询功能的主要作用是（）。","o":["A、提供历史数据","B、实时显示画面","C、控制系统运行","D、报告系统错误"],"a":"A","p":33},{"n":158,"section":"single","q":"常规中心设备维护中，对于老化的设备应该（）。","o":["A、立即更换","B、等待故障再处理","C、暂时不处理","D、仅记录情况"],"a":"A","p":34},{"n":159,"section":"single","q":"中心设备检查维护的原则中，（）原则强调了预防性维护的重要性。","o":["A、故障后处理","B、定期检查与保养","C、即时响应","D、随意维护"],"a":"B","p":34},{"n":160,"section":"single","q":"在中心设备检查维护中，（）原则要求操作规范化和标准化。","o":["A、随意操作","B、严格按照操作手册进行","C、快速响应","D、无需记录"],"a":"B","p":34},{"n":161,"section":"single","q":"操作设备中的鼠标出现故障时，首先应进行（）检查。","o":["A、更换鼠标","B、清洁鼠标表面","C、检查接口连接","D、拆开鼠标维修"],"a":"C","p":34},{"n":162,"section":"single","q":"监控中心供电设备日常检查中，首先应检查（）。","o":["A、外观是否完好","B、电流是否稳定","C、电压是否过高","D、频率是否异常"],"a":"A","p":34},{"n":163,"section":"single","q":"供电设备的散热系统日常检查，通常包括（）。","o":["A、清洁风扇","B、更换电源","C、检查电源插头","D、检查电压"],"a":"A","p":35},{"n":164,"section":"single","q":"UPS电源的日常检查维护中，电池状态检查的标准是（）。","o":["A、电池外观无破损","B、电池电压稳定","C、电池容量满足运行要求","D、电池温度适中"],"a":"C","p":35},{"n":165,"section":"single","q":"对于机柜内的线缆，日常检查主要检查（）。","o":["A、线缆外观","B、线缆长度","C、线缆连接紧固","D、线缆材质"],"a":"C","p":35},{"n":166,"section":"single","q":"显示设备日常检查中，（）内容最为关键。","o":["A、显示亮度","B、显示色彩","C、显示清晰度","D、显示设备的电源插头"],"a":"C","p":35},{"n":167,"section":"single","q":"对于机柜内部线缆的维护，（）措施是必要的。","o":["A、随意摆放线缆","B、定期更换线缆","C、定期检查线缆连接","D、无需维护线缆"],"a":"C","p":35},{"n":168,"section":"single","q":"视频存储设备日常维护中，应定期检查硬盘的（）指标以预判故障风险。","o":["A、硬盘外观颜色","B、S.M.A.R.T.健康状态及坏道数量","C、硬盘生产日期","D、硬盘品牌型号"],"a":"B","p":36},{"n":169,"section":"single","q":"对于监控中心的防雷设备，日常检查中应关注（）。","o":["A、防雷设备的型号","B、防雷设备的接地情况","C、防雷设备的颜色","D、防雷设备的价格"],"a":"B","p":36},{"n":170,"section":"single","q":"对于监控中心的音频设备，日常检查维护时应（）调整音量大小。","o":["A、根据环境噪音调整","B、设置为最大音量","C、无需调整音量","D、设置为固定值"],"a":"A","p":36},{"n":171,"section":"single","q":"中心设备维护时，清洁设备表面的常用工具是（）。","o":["A、湿布","B、螺丝刀","C、锤子","D、喷壶"],"a":"A","p":36},{"n":172,"section":"single","q":"对于中心设备的测试验证，（）参数最为关键。","o":["A、电流大小","B、信号强度","C、设备温度","D、外观完好度"],"a":"B","p":36},{"n":173,"section":"single","q":"中心设备维护维修时，更换部件的正确步骤是（）。","o":["A、随意拆卸","B、先断电后操作","C、无需断电操作","D、仅更换故障部件"],"a":"B","p":37},{"n":174,"section":"single","q":"中心设备测试验证时，对测试环境的要求是（）。","o":["A、无特定要求","B、清洁、无尘","C、安静、无干扰","D、昏暗、无光照"],"a":"B","p":37},{"n":175,"section":"single","q":"在中心设备故障判定时，对使用的工具和设备的要求是（）。","o":["A、无特定要求","B、必须使用新工具","C、符合安全规范","D、随意选择"],"a":"C","p":37},{"n":176,"section":"single","q":"在中心设备接线时，通常使用（）类型的电缆。","o":["A、光纤电缆","B、同轴电缆","C、双绞线","D、高压电缆"],"a":"C","p":37},{"n":177,"section":"single","q":"中心设备接线维护时，若遇到线路老化，应（）。","o":["A、更换新线","B、涂抹绝缘漆","C、焊接加固","D、增加保护措施"],"a":"A","p":37},{"n":178,"section":"single","q":"在进行中心设备接线故障判定前，需要做（）准备工作。","o":["A、断开电源","B、清理灰尘","C、检查软件","D、预热设备"],"a":"A","p":38},{"n":179,"section":"single","q":"进行中心设备接线测试验证时，必须确保（）。","o":["A、外观完好","B、速度快捷","C、安全可靠","D、随意操作"],"a":"C","p":38},{"n":180,"section":"single","q":"中心设备环境故障判定主要依据是（）。","o":["A、工作经验","B、温湿度数据","C、设备外观","D、电源状态"],"a":"B","p":38},{"n":181,"section":"single","q":"维护中心设备环境时，通过（）判断通风是否良好。","o":["A、观察外观","B、闻气味","C、感受气流","D、听声音"],"a":"C","p":38},{"n":182,"section":"single","q":"判定中心设备环境是否存在电磁干扰，通常使用（）方法。","o":["A、观察外观","B、使用电磁干扰测试仪","C、观察电压电流情况","D、听声音"],"a":"B","p":38},{"n":183,"section":"single","q":"对于中心设备环境的维护维修，（）是基本要求。","o":["A、任意时间检查","B、无需记录","C、定期检查","D、仅依赖经验"],"a":"C","p":39},{"n":184,"section":"single","q":"在进行中心设备环境维护时，对设备接地要求是（）。","o":["A、无需接地","B、偶尔检查","C、良好接地","D、无特别要求"],"a":"C","p":39},{"n":185,"section":"single","q":"在中心设备故障判定中，（）属于系统故障的范畴。","o":["A、电源故障","B、网络中断","C、电磁干扰","D、安装位置不当"],"a":"B","p":39},{"n":186,"section":"single","q":"在中心设备系统故障判定时，常用的方法不包括（）。","o":["A、观察系统日志","B、使用专业软件","C、观察系统运行情况","D、检查设备外观"],"a":"D","p":39},{"n":187,"section":"single","q":"在中心设备的维护维修中，对于系统故障，通常的处理方法不包括（）。","o":["A、软件更新或修复","B、重新安装系统","C、忽略故障提示","D、清理系统缓存"],"a":"C","p":39},{"n":188,"section":"single","q":"在进行中心设备维护维修时，应该使用（）来确保操作的安全性。","o":["A、忽略安全规范","B、随意调整系统参数","C、佩戴必要的防护设备","D、仅依赖个人经验"],"a":"C","p":40},{"n":189,"section":"single","q":"安全防范系统工程施工质量检验的首要步骤是（）。","o":["A、制定验收计划","B、施工材料准备","C、施工人员培训","D、系统调试"],"a":"A","p":40},{"n":190,"section":"single","q":"施工前，对材料的质量检验应（）。","o":["A、随机抽查","B、全部检验","C、无需检验","D、抽样检验"],"a":"D","p":40},{"n":191,"section":"single","q":"入侵报警系统施工完成后，检验其报警功能的方法是（）。","o":["A、观察外观","B、测试报警响应时间","C、检查安装位置","D、读取报警记录"],"a":"B","p":40},{"n":192,"section":"single","q":"施工完成后，安全防范系统的整体性能检验应由（）负责。","o":["A、施工人员","B、监理人员","C、设计人员","D、业主单位"],"a":"B","p":40},{"n":193,"section":"single","q":"入侵报警系统的主要功能是（）。","o":["A、照明控制","B、防盗报警","C、环境监测","D、视频监控"],"a":"B","p":41},{"n":194,"section":"single","q":"在银行金融机构使用紧急报警按钮通常安装在（）。","o":["A、隐蔽处","B、显眼处","C、室外","D、任意位置"],"a":"A","p":41},{"n":195,"section":"single","q":"入侵报警系统的主要特点是（）。","o":["A、实时性","B、延时性","C、低可靠性","D、高成本"],"a":"A","p":41},{"n":196,"section":"single","q":"根据GBB50348标准，安全防范工程按风险等级划分为（）个级别。","o":["A、二","B、三","C、四","D、五"],"a":"B","p":41},{"n":197,"section":"single","q":"视频监控系统中的摄像机主要负责（）。","o":["A、报警触发","B、录像存储","C、视频显示","D、图像采集"],"a":"D","p":41},{"n":198,"section":"single","q":"录像机在视频监控系统中的主要作用是（）。","o":["A、触发报警","B、显示视频","C、采集图像","D、存储录像"],"a":"D","p":42},{"n":199,"section":"single","q":"在视频监控系统中，（）远程查看监控画面。","o":["A、使用专用软件","B、更改摄像机参数","C、调整录像机设置","D、更换显示器"],"a":"A","p":42},{"n":200,"section":"single","q":"出入口控制系统的核心功能是（）。","o":["A、控制人员出入","B、照明控制","C、监控视频","D、消防联动"],"a":"A","p":42},{"n":201,"section":"single","q":"读卡器的主要作用是（）。","o":["A、记录出入人员","B、报警触发","C、身份验证","D、控制电控锁"],"a":"C","p":42},{"n":202,"section":"single","q":"出入口控制系统管理软件的主要功能不包括（）。","o":["A、人员权限管理","B、报警记录查询","C、照明控制","D、实时监控"],"a":"C","p":42},{"n":203,"section":"single","q":"出入口控制系统通过（）识别合法用户。","o":["A、通过密码","B、通过读卡器","C、通过钥匙","D、通过视频分析"],"a":"B","p":43},{"n":204,"section":"single","q":"停车库（场）管理系统的核心功能是（）。","o":["A、车辆出入管理","B、监控出入口","C、环境监测","D、消防联动"],"a":"A","p":43},{"n":205,"section":"single","q":"车辆识别设备主要识别（）。","o":["A、驾驶员身份","B、车辆颜色","C、车辆牌照","D、车辆型号"],"a":"C","p":43},{"n":206,"section":"single","q":"道闸的主要作用是（）。","o":["A、阻止车辆通行","B、照明","C、报警","D、显示信息"],"a":"A","p":43},{"n":207,"section":"single","q":"停车库（场）管理系统中的显示器主要用于显示（）。","o":["A、车辆数量","B、出入口情况","C、报警信息","D、视频画面"],"a":"A","p":43},{"n":208,"section":"single","q":"室内分机的主要功能是（）。","o":["A、接收报警信号","B、照明控制","C、与门口主机通话","D、显示视频"],"a":"C","p":44},{"n":209,"section":"single","q":"门口主机通常安装在（）。","o":["A、室内","B、室外","C、电梯间","D、地下室"],"a":"B","p":44},{"n":210,"section":"single","q":"管理中心机的主要功能不包括（）。","o":["A、监控通话","B、显示视频","C、报警记录","D、控制照明"],"a":"D","p":44},{"n":211,"section":"single","q":"电子巡查系统的主要功能是（）。","o":["A、照明控制","B、监测环境温度","C、人员巡查管理","D、消防联动"],"a":"C","p":44},{"n":212,"section":"single","q":"巡更棒通过（）记录巡查信息。","o":["A、手动输入","B、自动感应","C、视频记录","D、语音记录"],"a":"B","p":44},{"n":213,"section":"single","q":"防爆安全检查系统的核心功能是（）。","o":["A、探测爆炸物","B、照明控制","C、环境监测","D、消防联动"],"a":"A","p":45},{"n":214,"section":"single","q":"防爆安全检查系统的主要设备不包括（）。","o":["A、X光机","B、爆炸物探测器","C、摄像机","D、金属探测器"],"a":"C","p":45},{"n":215,"section":"single","q":"X光机在防爆安全检查系统中的作用是（）。","o":["A、显示物品内部结构","B、探测爆炸物","C、照明","D、报警"],"a":"A","p":45},{"n":216,"section":"single","q":"射频识别系统通常用于的场景（）。","o":["A、人员考勤","B、视频监控","C、入侵报警","D、照明控制"],"a":"A","p":45},{"n":217,"section":"single","q":"在安全防范系统中，访客管理的主要目的是（）。","o":["A、记录访客信息","B、入侵报警","C、监控视频","D、消防报警"],"a":"A","p":45},{"n":218,"section":"single","q":"安全防范系统的基础施工中，对于线缆的铺设，（）是正确的。","o":["A、线缆可以随意弯曲","B、线缆铺设应避开潮湿区域","C、线缆可以随意暴露在空气中","D、线缆铺设无需考虑电磁干扰"],"a":"B","p":46},{"n":219,"section":"single","q":"报警系统的线缆连接应满足（）。","o":["A、随意连接即可","B、无须考虑接地问题","C、线缆长度越长越好","D、连接应牢固、稳定"],"a":"D","p":46},{"n":220,"section":"single","q":"在防范系统的基础施工中，对于接地处理，（）是错误的。","o":["A、接地电阻应符合规范要求","B、接地线可以随意连接","C、接地线应使用符合标准的材料","D、接地处理是保障系统安全的重要环节"],"a":"B","p":46},{"n":221,"section":"single","q":"对于安全防范系统的设备安装，（）是不正确的。","o":["A、设备安装应牢固稳定","B、设备安装位置应便于维护和操作","C、设备安装高度越高越好","D、设备安装应符合设计要求"],"a":"C","p":46},{"n":222,"section":"single","q":"在安全防范系统施工现场，对于高处作业，应（）以确保安全。","o":["A、无需采取安全措施","B、佩戴安全带","C、随意攀爬","D、使用梯子"],"a":"B","p":46},{"n":223,"section":"single","q":"施工现场的安全警示标识，应（）。","o":["A、无需设置","B、仅在显眼位置设置","C、在必要位置设置并保持清晰","D、设置越多越好"],"a":"C","p":47},{"n":224,"section":"single","q":"在施工现场使用电动工具时，（）是不安全的。","o":["A、使用前检查电源线和插头","B、随意更换电动工具的插头","C、使用合适的防护装备","D、遵守电动工具的使用说明"],"a":"B","p":47},{"n":225,"section":"single","q":"施工现场的临时搭建物，应满足的要求是（）。","o":["A、无需考虑稳固性","B、使用易燃材料搭建","C、搭建牢固并考虑防火","D、随意搭建即可"],"a":"C","p":47},{"n":226,"section":"single","q":"识读施工图纸时，应注意（）方面的细节。","o":["A、图纸比例","B、图纸颜色","C、图纸纸张大小","D、图纸上的随机涂鸦"],"a":"A","p":47},{"n":227,"section":"single","q":"施工图纸中的标注符号，主要用于的目的是（）。","o":["A、装饰图纸","B、识别图纸中的特定内容","C、图纸分类","D、图纸保存"],"a":"B","p":47},{"n":228,"section":"single","q":"识读安全防范系统施工图纸时，（）不是必须关注的内容。","o":["A、图纸比例尺","B、图纸中的文字说明","C、图纸的绘制者信息","D、图纸的修改记录"],"a":"C","p":48},{"n":229,"section":"single","q":"在施工图纸中，区分不同的系统或设备的方法是（）。","o":["A、使用不同的颜色","B、使用相同的颜色","C、无需区分","D、随意标注"],"a":"A","p":48},{"n":230,"section":"single","q":"实体防护系统安装时，（）是必须遵守的原则。","o":["A、随意安装","B、美观为主","C、安全稳固","D、快速完成"],"a":"C","p":48},{"n":231,"section":"single","q":"实体防护系统安装完成后，应该（）以检查其有效性。","o":["A、仅凭外观判断","B、进行功能测试","C、无需检查","D、等待出现问题再检查"],"a":"B","p":48},{"n":232,"section":"single","q":"图纸中标识的线缆走向，通常与（）有关。","o":["A、施工人员习惯","B、美观要求","C、设备连接需求","D、材料成本"],"a":"C","p":48},{"n":233,"section":"single","q":"线缆布线施工图纸中，标注的线缆长度的计算方式是（）。","o":["A、实际测量长度","B、估算长度","C、图纸示意长度","D、最短路径长度"],"a":"A","p":49},{"n":234,"section":"single","q":"在线缆布线施工图纸识读中，判断线缆是否满足安全要求的方法是（）。","o":["A、观察线缆颜色","B、检查线缆标识","C、测量线缆阻抗","D、询问施工人员"],"a":"B","p":49},{"n":235,"section":"single","q":"在线缆布线施工中，对于长距离、高带宽的传输需求，一般会选择（）。","o":["A、同轴电缆","B、双绞线","C、光纤","D、控制总线"],"a":"C","p":49},{"n":236,"section":"single","q":"线缆布线施工中，（）决定了其传输距离和带宽。","o":["A、线缆颜色","B、线缆直径","C、线缆阻抗","D、线缆材质"],"a":"D","p":49},{"n":237,"section":"single","q":"在室外环境中，（）具有较好的耐候性和抗干扰能力。","o":["A、光纤","B、同轴电缆","C、双绞线","D、控制线缆"],"a":"A","p":49},{"n":238,"section":"single","q":"布线过程中，非屏蔽双绞线弯曲半径应不小于线缆外径的（）倍。","o":["A、1倍","B、2倍","C、4倍","D、8倍"],"a":"C","p":50},{"n":239,"section":"single","q":"室外线缆应（）以抵抗恶劣环境。","o":["A、包裹防火材料","B、裸露放置","C、包裹防水材料","D、使用普通塑料管"],"a":"C","p":50},{"n":240,"section":"single","q":"布线完成后，线缆接头应（）。","o":["A、直接裸露","B、使用绝缘胶带包裹","C、使用金属管包裹","D、使用胶水密封"],"a":"B","p":50},{"n":241,"section":"single","q":"布线施工中，应优先采用（）类型的线缆。","o":["A、裸线","B、屏蔽线缆","C、非屏蔽线缆","D、无所谓"],"a":"B","p":50},{"n":242,"section":"single","q":"线缆布线施工的第一步通常是（）。","o":["A、确定线缆型号","B、检查施工图纸","C、清理施工场地","D、布置施工设备"],"a":"B","p":50},{"n":243,"section":"single","q":"在布线过程中，应先进行（）线缆的铺设。","o":["A、电源线","B、信号线","C、控制线","D、传输线"],"a":"B","p":51},{"n":244,"section":"single","q":"线缆铺设完毕后，进行固定的方法是（）。","o":["A、使用铁丝捆绑","B、直接放置","C、使用专用夹具","D、使用胶带粘贴"],"a":"C","p":51},{"n":245,"section":"single","q":"在布线施工中，遇到障碍物时应（）。","o":["A、强行穿越","B、绕开障碍物","C、剪断线缆","D、改变线缆型号"],"a":"B","p":51},{"n":246,"section":"single","q":"线缆接头处理时，应使用（）材料包裹。","o":["A、绝缘胶带","B、防火胶带","C、防水胶带","D、普通胶带"],"a":"A","p":51},{"n":247,"section":"single","q":"室外线缆的固定间距一般不超过（）米。","o":["A、10","B、20","C、30","D、50"],"a":"C","p":51},{"n":248,"section":"single","q":"线缆布线的施工工艺中，（）不是必须的步骤。","o":["A、线缆测试","B、线缆标记","C、线缆捆绑","D、线缆浸水耐压试验"],"a":"D","p":52},{"n":249,"section":"single","q":"在制作线缆编号时，确定编号的起始点的方法是（）。","o":["A、随意选择","B、从线缆的一端开始","C、从线缆的中间开始","D、根据线缆长度决定"],"a":"B","p":52},{"n":250,"section":"single","q":"线缆编号的标签应使用（）材料制作。","o":["A、普通纸张","B、防水防油材料","C、塑料薄膜","D、金属片"],"a":"B","p":52},{"n":251,"section":"single","q":"线缆编号的字体大小应（）。","o":["A、越大越好","B、越小越好","C、根据实际情况选择","D、随意确定"],"a":"C","p":52},{"n":252,"section":"single","q":"线缆编号的颜色有（）作用。","o":["A、装饰作用","B、区分不同功能","C、提高线缆强度","D、无实际作用"],"a":"B","p":52},{"n":253,"section":"single","q":"线缆编号的颜色选择的要求是（）。","o":["A、鲜艳醒目","B、随意选择","C、与线缆颜色一致","D、无需颜色"],"a":"A","p":53},{"n":254,"section":"single","q":"对于室外环境，线缆编号应选择的材料是（）。","o":["A、易碎纸","B、普通纸质","C、防水防油材料","D、木质"],"a":"C","p":53},{"n":255,"section":"single","q":"制作线缆编号时，（）不是必要的工具。","o":["A、标签打印机","B、记号笔","C、裁剪刀","D、焊接机"],"a":"D","p":53},{"n":256,"section":"single","q":"线缆布线隐蔽工程检验时，首先应检查（）。","o":["A、布线图纸","B、施工人员资质","C、线缆外观","D、布线环境"],"a":"A","p":53},{"n":257,"section":"single","q":"隐蔽工程中的线缆弯曲半径应满足的要求是（）。","o":["A、任意弯曲","B、小于线缆直径","C、大于线缆直径","D、等于线缆直径"],"a":"C","p":53},{"n":258,"section":"single","q":"线缆接头在隐蔽工程的处理方法是（）。","o":["A、直接连接","B、使用胶带固定","C、裸露在外","D、封装保护"],"a":"D","p":54},{"n":259,"section":"single","q":"隐蔽工程中的线缆标识的设置方法是（）。","o":["A、无需标识","B、仅在两端标识","C、每隔一定距离标识","D、随意标识"],"a":"C","p":54},{"n":260,"section":"single","q":"线缆布线隐蔽工程检验时，应使用（）工具进行线缆长度测量。","o":["A、皮尺","B、激光测距仪","C、千分尺","D、卡尺"],"a":"B","p":54},{"n":261,"section":"single","q":"线缆接头在隐蔽工程中检验其牢固性的方法是（）。","o":["A、目测","B、拉力测试","C、振动测试","D、敲击检查"],"a":"B","p":54},{"n":262,"section":"single","q":"线缆与管道之间的间距检验，通常使用（）。","o":["A、手感检查","B、视觉检查","C、卡尺测量","D、仪器探测"],"a":"D","p":54},{"n":263,"section":"single","q":"隐蔽工程检验时，线缆固定件的检验标准是（）。","o":["A、固定牢固","B、颜色统一","C、位置随意","D、无特殊要求"],"a":"A","p":55},{"n":264,"section":"single","q":"线缆布线施工检验报告中，应包含的内容是（）。","o":["A、施工人员名单","B、施工日期","C、线缆品牌","D、施工环境"],"a":"B","p":55},{"n":265,"section":"single","q":"线缆布线施工检验报告中的线缆长度记录应精确到（）。","o":["A、米","B、厘米","C、毫米","D、千米"],"a":"A","p":55},{"n":266,"section":"single","q":"线缆接头施工质量检验的记录方法是（）。","o":["A、文字描述","B、绘制草图","C、拍照留存","D、仅口头汇报"],"a":"C","p":55},{"n":267,"section":"single","q":"现实生活中，一些人不断地从一个企业跳槽到另一个企业，虽然在一定意义上有利于人才流动，但同时也说明这些从业人员缺乏（）。","o":["A、工作技能","B、强烈的职业责任感","C、光明磊落的态度","D、坚持真理的本质"],"a":"B","p":55},{"n":268,"section":"single","q":"爱岗敬业要求从业者在工作中应具备的基本态度是（）。","o":["A、只关注自身利益，完成分内事即可","B、以积极热情的态度对待工作，尽职尽责","C、优先考虑工作轻松程度，避免承担过多责任","D、以积极热情的态度对待工作，争取个人最大利益"],"a":"B","p":56},{"n":269,"section":"single","q":"某机械厂一位领导说：机械工业工艺复杂，技术密集，工程师在图纸上画得再好、再正确，工人操作中假如差那么一毫米，最终出来就可能是废品。这段话关键强调（）素质关键性。","o":["A、专业技能","B、思想政治","C、职业道德","D、身心素质"],"a":"A","p":56},{"n":270,"section":"single","q":"在职业活动中，应当遵循的首要原则是（）。","o":["A、竞争原则","B、公正原则","C、利益原则","D、效率原则"],"a":"B","p":56},{"n":271,"section":"single","q":"作为社会意识形态之一，对社会的发展起着重要作用的是（）。","o":["A、职业道德的内涵","B、职业道德的作用","C、职业道德的要素","D、职业道德的特征"],"a":"B","p":56},{"n":272,"section":"single","q":"中心设备设备的常见故障不包括（）。","o":["A、云台故障","B、软件故障","C、硬件故障","D、网络连接问题"],"a":"A","p":56},{"n":273,"section":"single","q":"中心设备设备故障最常用的判定方法是（）。","o":["A、观察设备外观","B、听取设备声音","C、使用诊断仪器","D、对比正常设备"],"a":"C","p":57},{"n":274,"section":"single","q":"UPS电源出现过载报警时，应该（）。","o":["A、立即增加","B、减少负载","C、更换UPS电源","D、不理会，继续使用"],"a":"B","p":57},{"n":275,"section":"single","q":"中心设备中，设备的（）是确保设备正常运行的关键。","o":["A、定期维护","B、清洁","C、检查连接","D、更换部件"],"a":"A","p":57},{"n":276,"section":"single","q":"在测试验证过程中，以下（）选项最能全面测试设备的性能。","o":["A、多次测试同一功能","B、分析结果并验证","C、对比不同品牌设备测试结果","D、使用多种测试工具进行测试"],"a":"D","p":57},{"n":277,"section":"single","q":"在进行设备功能测试时，以下（）选项是最重要的。","o":["A、只测试已知功能","B、测试所有可能的功能","C、根据需要选择测试功能","D、优先测试关键功能"],"a":"B","p":58},{"n":278,"section":"single","q":"中心设备接线出现故障时，以下（）选项是维护维修的必要步骤。","o":["A、检查并修复接线错误","B、更换损坏部件","C、更换易损件","D、清洁设备并更换空气滤清器"],"a":"A","p":58},{"n":279,"section":"single","q":"在测试验证过程中，以下（）选项不属于验证的内容。","o":["A、验证设备是否正常运行","B、验证接线是否正确连接","C、验证数据传输是否正常","D、验证设备的外观是否正常"],"a":"D","p":58},{"n":280,"section":"single","q":"在判定中心设备环境故障时，以下（）选项最能作为依据。","o":["A、直接替换部件进行测试","B、分析设备性能并记录","C、使用专业软件进行环境测试","D、比较设备与正常情况"],"a":"D","p":58},{"n":281,"section":"single","q":"在中心设备的维护中，以下（）选项是必要的步骤。","o":["A、定期更换易损件","B、直接替换损坏部件","C、分析设备性能并记录问题","D、更换老化电源线"],"a":"C","p":58},{"n":282,"section":"single","q":"中心设备出现温度过高的情况，导致温度过高的原因是（）。","o":["A、设备多户用户登录","B、散热设备故障","C、数据传输过多","D、电源功率不足"],"a":"B","p":59},{"n":283,"section":"single","q":"在判定中心设备环境故障时，首要检查的环境因素是（）。","o":["A、设备间的清洁程度","B、环境温湿度","C、设备摆放位置","D、周边电磁干扰情况"],"a":"B","p":59},{"n":284,"section":"single","q":"对于中心设备环境中的空气质量问题，以下测试验证方法能够最准确地检测有害气体含量的是（）。","o":["A、目视观察法，查看设备表面是否有腐蚀迹象","B、嗅觉判断法，通过闻气味来初步判断空气质量","C、使用空气质量检测仪，检测二氧化硫、氮氧化物等气体浓度","D、检查设备的运行日志，看是否有因空气质量导致的故障记录"],"a":"C","p":59},{"n":285,"section":"single","q":"红外对射探测器调试时，发射端与接收端对准后，应观察（）以确认对准成功。","o":["A、接收端信号强度指示灯","B、发射端功率指示灯","C、电源指示灯","D、报警输出指示灯"],"a":"A","p":59},{"n":286,"section":"single","q":"调试摄像头白平衡时，若画面偏蓝，应（）。","o":["A、增加蓝色增益","B、减少蓝色增益","C、增加曝光时间","D、降低图像分辨率"],"a":"B","p":59},{"n":287,"section":"single","q":"门禁控制器通电测试时，应验证（）功能是否正常。","o":["A、读卡识别与锁控输出","B、视频录像","C、网络广播","D、温度采集"],"a":"A","p":60},{"n":288,"section":"single","q":"被动红外探测器调试中，若误报率过高，应优先（）。","o":["A、更换探测器","B、适当降低灵敏度并调整探测角度","C、增大探测距离","D、提高供电电压"],"a":"B","p":60},{"n":289,"section":"single","q":"摄像头宽动态（WDR）功能调试的主要目的是（）。","o":["A、提高夜间拍摄效果","B、解决逆光环境下明暗区域同时清晰的问题","C、增加录像帧率","D、降低网络带宽占用"],"a":"B","p":60},{"n":290,"section":"single","q":"测试UPS市电与电池切换时间时，应使用（）进行精确测量。","o":["A、普通手表","B、示波器或专用UPS测试仪","C、万用表","D、红外测温仪"],"a":"B","p":60},{"n":291,"section":"single","q":"网络摄像机调试时，配置IP地址后应首先（）。","o":["A、调整镜头焦距","B、使用ping命令测试网络连通性","C、设置录像计划","D、配置报警联动"],"a":"B","p":60},{"n":292,"section":"single","q":"被动红外探测器安装角度调试时，探测器的探测方向应（）。","o":["A、正对门窗等入侵通道","B、朝向天花板","C、朝向地面","D、随意方向均可"],"a":"A","p":61},{"n":293,"section":"single","q":"车牌识别摄像机调试中，补光灯的照射角度应（）。","o":["A、与摄像机光轴保持一致，避免产生车牌反光","B、垂直照射车牌","C、从侧面45°照射","D、无需调整角度"],"a":"A","p":61},{"n":294,"section":"single","q":"报警主机防区调试时，每个防区应（）以确认报警功能正常。","o":["A、逐一触发探测器并观察主机响应","B、同时触发所有防区","C、仅检查接线即可","D、仅查看主机指示灯"],"a":"A","p":61},{"n":295,"section":"single","q":"网络摄像机码流设置中，主码流通常用于（）。","o":["A、本地预览","B、录像存储与远程高清预览","C、仅用于报警抓拍","D、仅用于设备管理"],"a":"B","p":61},{"n":296,"section":"single","q":"门禁电磁锁调试时，检验其吸力是否达标应使用（）。","o":["A、目测观察","B、拉力计进行拉力测试","C、万用表测量电压","D、听声音判断"],"a":"B","p":62},{"n":297,"section":"single","q":"光纤收发器通电测试时，应观察（）指示灯确认光纤链路正常。","o":["A、电源指示灯","B、光口LINK指示灯","C、风扇运转指示灯","D、温度报警指示灯"],"a":"B","p":62},{"n":298,"section":"single","q":"报警联动调试中，触发入侵报警后，联动摄像机应（）。","o":["A、自动转向预置位并开始录像","B、保持原有状态不变","C、自动关闭","D、仅发出声音提示"],"a":"A","p":62},{"n":299,"section":"single","q":"调试摄像头红外夜视功能时，若夜间画面出现中心过亮、四周过暗的现象，应（）。","o":["A、增大红外灯功率","B、调整红外灯照射角度或更换广角红外灯","C、降低图像分辨率","D、增加曝光时间"],"a":"B","p":62},{"n":300,"section":"single","q":"门禁系统采用韦根（Wiegand）协议通信时，调试中应重点确认（）。","o":["A、韦根数据线与读卡器的接线顺序及信号电平","B、电源线电压","C、网络IP地址","D、摄像头分辨率"],"a":"A","p":62},{"n":301,"section":"multi","q":"安全防范系统安装维护员应遵守的职业道德包括（）。","o":["A、保护客户财产安全","B、随意泄露系统信息","C、尊重客户隐私","D、遵守行业规范"],"a":"ACD","p":63},{"n":302,"section":"multi","q":"文明生产对安全防范系统安装维护员的职业道德要求是（）。","o":["A、遵守文明生产规范","B、随意堆放施工材料","C、无视生产安全，随意操作设备","D、营造整洁有序的工作环境"],"a":"AD","p":63},{"n":303,"section":"multi","q":"安全防范系统安装维护员在处理工作关系时，应遵循的职业道德原则包括（）。","o":["A、尊重他人，平等沟通","B、恶意竞争，损害同事利益","C、团结协作，共同发展","D、无视团队协作，只顾个人利益"],"a":"AC","p":63},{"n":304,"section":"multi","q":"当安全防范系统出现故障时，安全防范系统安装维护员应采取（）措施。","o":["A、立即停机","B、记录故障现象","C、通知相关人员","D、尝试自行修复"],"a":"BC","p":63},{"n":305,"section":"multi","q":"（）行为符合安全防范系统安装维护员的职业守则的内容。","o":["A、诚实守信，遵守承诺","B、保护客户隐私和信息安全","C、团队合作，共同解决问题","D、为谋取私利而泄露客户资料"],"a":"ABC","p":63},{"n":306,"section":"multi","q":"安全防范系统中，常用的数据传输方式有（）。","o":["A、有线传输","B、无线传输","C、光纤传输","D、蓝牙传输"],"a":"ABC","p":64},{"n":307,"section":"multi","q":"在安全防范系统的电路设计中，为了降低电磁干扰，可以采取（）措施。","o":["A、合理选择线缆","B、增加滤波电路","C、屏蔽线路","D、提高电源电压"],"a":"ABC","p":64},{"n":308,"section":"multi","q":"在设计安全防范系统的网络架构时，需要考虑（）因素。","o":["A、BAS结构","B、数据传输速度","C、网络安全策略","D、设备兼容性"],"a":"BCD","p":64},{"n":309,"section":"multi","q":"安全防范系统通常具备（）基本功能。","o":["A、视频监控与记录","B、入侵检测与报警","C、门禁控制与管理","D、环境监测与调节"],"a":"ABC","p":64},{"n":310,"section":"multi","q":"门禁控制系统在安全防范系统中涉及（）设备。","o":["A、门禁读卡器","B、电控锁","C、门禁控制器","D、视频监控摄像头"],"a":"ABC","p":65},{"n":311,"section":"multi","q":"安全防范系统的特点通常包括（）。","o":["A、系统集成度高","B、智能化水平高","C、安全性能可靠","D、部署成本低廉"],"a":"ABC","p":65},{"n":312,"section":"multi","q":"安全防范系统报警功能的检验通常包括（）内容。","o":["A、报警响应时间","B、报警信号传输稳定性","C、报警信号的准确性","D、报警方式的多样性"],"a":"ABC","p":65},{"n":313,"section":"multi","q":"紧急报警系统通常应用于（）场所。","o":["A、银行金融机构","B、阳台","C、住宅小区","D、公共交通站点"],"a":"ACD","p":65},{"n":314,"section":"multi","q":"影响视频监控系统图像质量的因素有（）。","o":["A、摄像头质量","B、传输线路质量","C、环境光线","D、压缩算法"],"a":"ABCD","p":65},{"n":315,"section":"multi","q":"停车库（场）管理系统中的车辆识别技术有（）。","o":["A、车牌识别","B、RFID识别","C、面部识别","D、指纹识别"],"a":"AB","p":66},{"n":316,"section":"multi","q":"防爆安全检查系统通常具备（）功能。","o":["A、爆炸物品检测","B、人员身份识别","C、视频监控","D、环境监测"],"a":"ABC","p":66},{"n":317,"section":"multi","q":"施工中对于线缆的保护措施包括（）。","o":["A、使用保护管","B、使用保护套","C、裸露线缆","D、定期检查线缆状态"],"a":"ABD","p":66},{"n":318,"section":"multi","q":"施工现场临时用电的安全要求有（）。","o":["A、电缆线路不得拖地","B、不得使用破损电缆","C、随意拉线","D、配电箱应上锁"],"a":"ABD","p":66},{"n":319,"section":"multi","q":"监控中心供电设备测试时，需要准备（）测试工具。","o":["A、电压表","B、电流表","C、绝缘电阻测试仪","D、压力开关"],"a":"ABC","p":66},{"n":320,"section":"multi","q":"机柜通电过程中，（）操作是正确的。","o":["A、先接通主电源","B、逐步接通各设备电源","C、快速接通所有电源","D、通电后立即检查设备状态"],"a":"AB","p":67},{"n":321,"section":"multi","q":"报警主机通电测试时，（）功能应正常。","o":["A、报警信号接收","B、报警信号输出","C、报警记录存储","D、报警声音提示"],"a":"ABCD","p":67},{"n":322,"section":"multi","q":"网络交换机通电时，应满足（）技术要求。","o":["A、端口数量足够","B、网络带宽达标","C、数据转发率高","D、延迟时间短"],"a":"ABCD","p":67},{"n":323,"section":"multi","q":"门禁读卡器通电过程中，需要关注（）参数。","o":["A、工作电压","B、通讯波特率","C、读卡距离","D、卡片类型"],"a":"ABCD","p":67},{"n":324,"section":"multi","q":"门禁读卡器通电测试时，应（）以确保通信正常。","o":["A、测试通讯协议","B、通讯方式","C、验证通讯速率","D、测试网络连通性"],"a":"ACD","p":67},{"n":325,"section":"multi","q":"（）可以通过调整安装角度来改变其覆盖范围。","o":["A、摄像头","B、报警探测器","C、门禁读卡器","D、巡更系统"],"a":"AB","p":68},{"n":326,"section":"multi","q":"前端设备防护目标的覆盖要求通常需要考虑（）。","o":["A、设备性能","B、环境条件","C、探测距离","D、功能验证"],"a":"ABC","p":68},{"n":327,"section":"multi","q":"在进行入侵报警系统的前端设备调整时，需要注意的安全问题有（）。","o":["A、断开电源","B、确保设备稳定","C、遵循操作规程","D、佩戴防护装备"],"a":"ABCD","p":68},{"n":328,"section":"multi","q":"在调整入侵报警系统的前端设备防护目标时，（）参数的设置至关重要。","o":["A、探测角度","B、灵敏度","C、报警响应时间","D、设备功耗"],"a":"ABC","p":68},{"n":329,"section":"multi","q":"在调整视频监控系统前端设备防护目标时，应考虑的环境因素是（）。","o":["A、光照条件","B、气候条件","C、电磁干扰","D、设备成本"],"a":"ABC","p":68},{"n":330,"section":"multi","q":"出入口控制系统前端设备防护目标的调整方法中，（）措施有助于减少误报率。","o":["A、调整识别阈值","B、增大识别距离","C、优化识别算法","D、使用高亮度显示屏"],"a":"AC","p":69},{"n":331,"section":"multi","q":"出入口控制系统前端设备防护目标的调整要求中，（）参数影响识别准确性。","o":["A、识别距离","B、识别角度","C、识别阈值","D、识别速度"],"a":"ABCD","p":69},{"n":332,"section":"multi","q":"其他前端设备防护目标的调整要求中，（）参数与环境适应性相关。","o":["A、环境温度范围","B、防水性能等级","C、抗电磁干扰能力","D、设备功耗"],"a":"ABC","p":69},{"n":333,"section":"multi","q":"在复核监控中心供电设备时，对于UPS的（）指标需要进行测试。","o":["A、输出电压稳定性","B、备份时间","C、转换时间","D、设备温度"],"a":"ABC","p":69},{"n":334,"section":"multi","q":"监控中心供电设备复核要求中，对于UPS设备应关注（）指标。","o":["A、输出电压稳定性","B、转换时间","C、备份时间","D、噪音水平"],"a":"ABC","p":69},{"n":335,"section":"multi","q":"复核监控中心机柜时，对于布线有（）要求。","o":["A、整齐美观","B、标识清晰","C、无交叉","D、随意摆放"],"a":"ABC","p":70},{"n":336,"section":"multi","q":"监控中心操作设备安装调整的复核要求中，对于操作台的要求有（）。","o":["A、操作台稳固","B、操作台高度可调","C、操作台表面光滑","D、操作台颜色统一"],"a":"AB","p":70},{"n":337,"section":"multi","q":"复核监控中心网络设备时，应确保（）指标符合要求。","o":["A、网络带宽","B、网络延时","C、网络稳定性","D、网络安全性"],"a":"ABCD","p":70},{"n":338,"section":"multi","q":"复核监控中心门禁系统时，应测试（）。","o":["A、门禁开启","B、门禁关闭","C、门禁权限管理","D、门禁报警功能"],"a":"ABCD","p":70},{"n":339,"section":"multi","q":"对视频监控系统前端摄像头进行复核时，应关注（）。","o":["A、分辨率","B、焦距","C、光圈范围","D、曝光时间"],"a":"ABCD","p":71},{"n":340,"section":"multi","q":"复核电子巡查系统前端巡查点时，应检查（）。","o":["A、巡查点数量","B、巡查点位置","C、巡查点标识","D、巡查点记录方式"],"a":"ABCD","p":71},{"n":341,"section":"multi","q":"复核智能分析系统前端设备时，应检查（）参数符合要求。","o":["A、识别准确率","B、误报率","C、漏报率","D、响应时间"],"a":"ABCD","p":71},{"n":342,"section":"multi","q":"复核说明报告的签名部分应包括（）。","o":["A、签名日期","B、签名人员","C、签名理由","D、签名笔迹"],"a":"AB","p":71},{"n":343,"section":"multi","q":"复核说明报告中，中心服务器设备的性能评估应包括（）。","o":["A、CPU性能","B、内存大小","C、硬盘存储","D、网络接口"],"a":"ABC","p":71},{"n":344,"section":"multi","q":"复核说明报告中前端设备照片应满足（）。","o":["A、清晰度高","B、标注明确","C、色彩鲜艳","D、大小统一"],"a":"AB","p":72},{"n":345,"section":"multi","q":"复核说明报告中前端设备的电源要求，通常需要考虑（）。","o":["A、电源电压","B、电源电流","C、电源线长度","D、电源插头类型"],"a":"AB","p":72},{"n":346,"section":"multi","q":"复核说明报告中，对于前端设备布线的描述，涉及（）。","o":["A、布线长度","B、布线材料","C、布线走向","D、布线颜色"],"a":"ABC","p":72},{"n":347,"section":"multi","q":"前端设备接入时，需要考虑的技术因素有（）。","o":["A、设备兼容性","B、通信协议","C、传输距离","D、设备价格"],"a":"ABC","p":72},{"n":348,"section":"multi","q":"存储设备录像参数设置包括（）。","o":["A、录像分辨率","B、录像格式","C、录像时长","D、循环录像间隔"],"a":"ABCD","p":72},{"n":349,"section":"multi","q":"巡检系统巡检点设置的要求通常有（）。","o":["A、巡检点数量合理","B、巡检点位置明确","C、巡检路线合理","D、巡检时间间隔稳定"],"a":"ABC","p":73},{"n":350,"section":"multi","q":"入侵报警系统探测器安装位置的要求应考虑（）。","o":["A、便于探测","B、隐蔽性","C、环境噪声","D、抗干扰能力"],"a":"ABD","p":73},{"n":351,"section":"multi","q":"报警输出设备的报警延时设置方法通常包括（）。","o":["A、确定延时时间","B、设置延时模式","C、选择报警输出方式","D、调整报警声音大小"],"a":"AB","p":73},{"n":352,"section":"multi","q":"联动控制设备在安防系统中的作用是（）。","o":["A、提高报警响应速度","B、实现多系统协同工作","C、优化安防管理流程","D、降低误报率"],"a":"AB","p":73},{"n":353,"section":"multi","q":"在前端设备安装过程中，（）因素可能影响其性能。","o":["A、安装位置","B、安装角度","C、安装高度","D、安装方式"],"a":"ABC","p":73},{"n":354,"section":"multi","q":"存储设备数据完整性检验，一般涉及（）。","o":["A、读取校验","B、写入测试","C、RAID冗余验证","D、网络带宽测试"],"a":"ABC","p":74},{"n":355,"section":"multi","q":"监控中心供电系统检验时，应重点考虑（）。","o":["A、电源稳定性","B、供电容量","C、备份电源","D、线路布局"],"a":"ABCD","p":74},{"n":356,"section":"multi","q":"网络通信设备性能检验通常涉及（）。","o":["A、端口速率测试","B、数据吞吐量测试","C、设备延迟测试","D、设备温度检查"],"a":"ABC","p":74},{"n":357,"section":"multi","q":"视频监控系统前端摄像机检验时，需要关注（）。","o":["A、分辨率","B、帧率","C、最低照度","D、镜头焦距"],"a":"ABCD","p":74},{"n":358,"section":"multi","q":"在记录查询操作中，通常可以通过（）条件筛选录像。","o":["A、日期筛选","B、用户筛选","C、摄像头筛选","D、报警类型筛选"],"a":"ACD","p":74},{"n":359,"section":"multi","q":"实时显示功能的资料准备包括（）。","o":["A、摄像头配置信息","B、录像存储位置","C、用户操作手册","D、实时显示软件授权"],"a":"ABCD","p":75},{"n":360,"section":"multi","q":"视频监控子系统的实时显示要求包括（）。","o":["A、画面清晰","B、无延迟","C、可调节监控角度","D、可保存录像"],"a":"AB","p":75},{"n":361,"section":"multi","q":"在查询安全防范系统记录时，需要满足的基本要求是（）。","o":["A、权限验证","B、记录完整性","C、实时性显示","D、保密性措施"],"a":"ABD","p":75},{"n":362,"section":"multi","q":"常规中心设备检查维护中，显示设备应检查（）。","o":["A、亮度与对比度","B、色彩准确性","C、屏幕尺寸","D、分辨率"],"a":"ABD","p":75},{"n":363,"section":"multi","q":"供电设备的散热系统日常检查，包括（）。","o":["A、风扇运转情况","B、散热口清洁","C、散热片完好性","D、电源线连接"],"a":"ABC","p":75},{"n":364,"section":"multi","q":"机柜内部线缆日常检查应注意的事项是（）。","o":["A、线缆连接是否紧固","B、线缆是否有破损","C、线缆布局是否合理","D、线缆颜色是否一致"],"a":"ABC","p":76},{"n":365,"section":"multi","q":"监控中心机柜日常检查维护的要求包括（）。","o":["A、机柜外观检查","B、机柜内部清洁","C、机柜门锁维护","D、机柜内部线缆检查"],"a":"ABCD","p":76},{"n":366,"section":"multi","q":"中心设备维护维修中，对于设备老化的判断通常基于（）因素。","o":["A、使用时间","B、外观变化","C、性能下降","D、品牌差异"],"a":"ABC","p":76},{"n":367,"section":"multi","q":"中心设备接线测试验证的方法包括（）。","o":["A、连通性测试","B、信号强度测试","C、外观检查","D、阻抗测试"],"a":"ABCD","p":76},{"n":368,"section":"multi","q":"在判定中心设备接线故障时，需要遵循（）。","o":["A、精确诊断","B、快速完成","C、安全操作","D、忽略细节"],"a":"AC","p":76},{"n":369,"section":"multi","q":"中心设备环境维护维修的基本要求有（）。","o":["A、定期巡检","B、准确记录","C、随意操作","D、遵循标准"],"a":"ABD","p":77},{"n":370,"section":"multi","q":"中心设备系统故障可能包括（）情况。","o":["A、系统软件崩溃","B、网络通信故障","C、电源供应问题","D、安装位置不当"],"a":"ABC","p":77},{"n":371,"section":"judge","q":"安全防范系统安装维护员可以随意更改系统参数，以提高系统性能。（）","o":[],"a":"错误","p":77},{"n":372,"section":"judge","q":"保守秘密是安全防范系统安装维护员的基本职业道德要求，他们应严守工作秘密，不泄露任何可能影响工作安全或损害公司利益的信息。（）","o":[],"a":"正确","p":77},{"n":373,"section":"judge","q":"安全防范系统安装维护员在处理系统故障时，应诚实报告故障情况，积极解决，而不是隐瞒或推卸责任。（）","o":[],"a":"正确","p":77},{"n":374,"section":"judge","q":"安全防范系统安装维护员在进行系统维护时，必须严格遵守相关安全操作规程。（）","o":[],"a":"正确","p":77},{"n":375,"section":"judge","q":"在安全防范系统安装维护工作中，高级维修员应时刻保持诚信和公正，这体现了社会主义核心价值观中的诚信和公正要求。（）","o":[],"a":"正确","p":77},{"n":376,"section":"judge","q":"安全防范系统安装维护员在保护客户隐私方面负有重要责任，应严格遵守相关规定。（）","o":[],"a":"正确","p":77},{"n":377,"section":"judge","q":"对于安全防范系统的线缆连接质量检验，只需检查线缆的型号与规格是否匹配，无需考虑线缆的绝缘性能。（）","o":[],"a":"错误","p":77},{"n":378,"section":"judge","q":"在安全防范系统的基础施工中，线缆的铺设可以随意选择铺设方式。（）","o":[],"a":"错误","p":77},{"n":379,"section":"judge","q":"施工现场的临时用电设备应定期进行维护和检修。（）","o":[],"a":"正确","p":78},{"n":380,"section":"judge","q":"图纸中的标注尺寸与实际施工尺寸完全一致，无需校验。（）","o":[],"a":"错误","p":78},{"n":381,"section":"judge","q":"实体防护系统设施的材料选择应优先考虑成本，其次才是质量和性能。（）","o":[],"a":"错误","p":78},{"n":382,"section":"judge","q":"通电时，为确保安全，应确保现场有专业人员值守。（）","o":[],"a":"正确","p":78},{"n":383,"section":"judge","q":"供电设备测试时，可以使用临时接线代替正式接线。（）","o":[],"a":"错误","p":78},{"n":384,"section":"judge","q":"供电设备的安全防护等级越高，其防尘防水能力越强。（）","o":[],"a":"正确","p":78},{"n":385,"section":"judge","q":"机柜通电时，应按照设备的重要性顺序接通电源。（）","o":[],"a":"错误","p":78},{"n":386,"section":"judge","q":"显示设备通电后，色彩饱和度越高，显示效果越好。（）","o":[],"a":"错误","p":78},{"n":387,"section":"judge","q":"机柜通电前，只需检查电源线是否连接完好。（）","o":[],"a":"错误","p":78},{"n":388,"section":"judge","q":"硬盘录像机通电时，应确保硬盘已正确安装并格式化。（）","o":[],"a":"正确","p":78},{"n":389,"section":"judge","q":"视频编解码器通电测试时，只需检查电源指示灯即可。（）","o":[],"a":"错误","p":78},{"n":390,"section":"judge","q":"环境监控设备通电时，工作环境湿度过高可能导致设备损坏。（）","o":[],"a":"正确","p":78},{"n":391,"section":"judge","q":"摄像头通电前，必须先安装镜头，否则可能导致设备损坏。（）","o":[],"a":"正确","p":78},{"n":392,"section":"judge","q":"红外探测器通电测试时，应分别在白天和夜晚进行，以测试其全天候工作能力。（）","o":[],"a":"正确","p":78},{"n":393,"section":"judge","q":"摄像头通电时，工作电压过高或过低均会影响其正常工作。（）","o":[],"a":"正确","p":78},{"n":394,"section":"judge","q":"出入口控制系统电动门机通电后，只需观察电机是否转动即可判断其是否正常工作。（）","o":[],"a":"错误","p":78},{"n":395,"section":"judge","q":"识读前端设备防护目标设计图纸时，只需关注设备型号即可。（）","o":[],"a":"错误","p":78},{"n":396,"section":"judge","q":"在确定前端设备覆盖范围时，实地测试是一种有效的方法。（）","o":[],"a":"正确","p":78},{"n":397,"section":"judge","q":"通过降低入侵报警系统的前端设备的灵敏度，可以有效减少误报率。（）","o":[],"a":"正确","p":78},{"n":398,"section":"judge","q":"在调整入侵报警系统的前端设备防护目标时，只需考虑探测范围，无需关注误报率。（）","o":[],"a":"错误","p":78},{"n":399,"section":"judge","q":"为了减少视频监控系统前端设备的误报率，应增加图像分辨率。（）","o":[],"a":"错误","p":78},{"n":400,"section":"judge","q":"视频监控系统前端设备的防护目标的调整要求中，图像分辨率是唯一影响存储空间的参数。（）","o":[],"a":"错误","p":78},{"n":401,"section":"judge","q":"在调整出入口控制系统前端设备防护目标时，需要综合考虑环境因素和设备性能。（）","o":[],"a":"正确","p":78},{"n":402,"section":"judge","q":"传输速率不影响出入口控制系统前端设备的防护目标调整要求。（）","o":[],"a":"错误","p":79},{"n":403,"section":"judge","q":"增大停车场管理系统前端设备的识别距离一定能够提高识别准确性。（）","o":[],"a":"错误","p":79},{"n":404,"section":"judge","q":"停车场管理系统前端设备防护目标的调整要求中，必须确保设备在各种天气条件下都能稳定工作。（）","o":[],"a":"正确","p":79},{"n":405,"section":"judge","q":"增大电子巡查系统前端设备的电源电压一定能提高识别速度和准确性。（）","o":[],"a":"错误","p":79},{"n":406,"section":"judge","q":"电子巡查系统前端设备防护目标的调整要求中，感应范围越大越好。（）","o":[],"a":"错误","p":79},{"n":407,"section":"judge","q":"其他前端设备防护目标的调整要求中，设备的防水性能等级越高越好。（）","o":[],"a":"正确","p":79},{"n":408,"section":"judge","q":"在复核监控中心供电设备时，只需检查电源线的线径，无需检查其绝缘电阻。（）","o":[],"a":"错误","p":79},{"n":409,"section":"judge","q":"监控中心机柜安装调整复核时，只需检查机柜外观，无需关注内部布线情况。（）","o":[],"a":"错误","p":79},{"n":410,"section":"judge","q":"复核监控中心显示设备时，显示屏的水平度偏差对显示效果无影响。（）","o":[],"a":"错误","p":79},{"n":411,"section":"judge","q":"复核监控中心门禁系统时，应测试门禁系统与其他安全防范系统的联动功能是否正常。（）","o":[],"a":"正确","p":79},{"n":412,"section":"judge","q":"对视频监控系统前端摄像头进行复核时，只需测试其画面是否清晰，无需关注其他参数。（）","o":[],"a":"错误","p":79},{"n":413,"section":"judge","q":"复核电子巡查系统前端巡查点时，巡查点数量越多，巡查效果越好。（）","o":[],"a":"错误","p":79},{"n":414,"section":"judge","q":"公共广播系统前端扬声器的音质清晰度对广播效果没有影响。（）","o":[],"a":"错误","p":79},{"n":415,"section":"judge","q":"人脸识别系统前端设备的识别准确率越高，说明其性能越好。（）","o":[],"a":"正确","p":79},{"n":416,"section":"judge","q":"复核说明报告中，中心存储设备的硬盘阵列RAID级别越高，数据安全性越高。（）","o":[],"a":"正确","p":79},{"n":417,"section":"judge","q":"复核说明报告中前端设备的测试数据部分可以只以文字形式描述，无需表格记录。（）","o":[],"a":"错误","p":79},{"n":418,"section":"judge","q":"复核说明报告中，前端设备防水性能的描述应包含具体防水等级。（）","o":[],"a":"正确","p":80},{"n":419,"section":"judge","q":"复核说明报告中，前端设备布线的清晰规范是确保系统稳定运行的重要因素。（）","o":[],"a":"正确","p":80},{"n":420,"section":"judge","q":"监控中心设备接入连接调整的复核要求中，设备接口的兼容性是必查项。（）","o":[],"a":"正确","p":80},{"n":421,"section":"judge","q":"监控中心设备编号修改调整复核时，只需关注编号的更改，无需考虑其他因素。（）","o":[],"a":"错误","p":80},{"n":422,"section":"judge","q":"设备编号修改后，原编号标签可直接覆盖粘贴新标签，无需清除旧标签。（）（）","o":[],"a":"错误","p":80},{"n":423,"section":"judge","q":"在前端设备接入连接调整复核中，发现小问题可以忽略不计，无需记录。（）","o":[],"a":"错误","p":80},{"n":424,"section":"judge","q":"复核前端设备编号修改调整时，应确保所有相关人员都了解修改内容和目的。（）","o":[],"a":"正确","p":80},{"n":425,"section":"judge","q":"复核说明报告中的接入连接图应清晰展示设备之间的连接关系和方式。（）","o":[],"a":"正确","p":80},{"n":426,"section":"judge","q":"复核前端设备接入连接时，核对设备型号的目的是确保设备之间的兼容性。（）","o":[],"a":"正确","p":80},{"n":427,"section":"judge","q":"前端设备编号修改调整复核说明报告必须包含修改前的设备性能分析。（）","o":[],"a":"错误","p":80},{"n":428,"section":"judge","q":"前端设备编号修改调整复核结论部分应重点强调修改过程中遇到的问题，而非修改对系统的影响。（）","o":[],"a":"错误","p":80},{"n":429,"section":"judge","q":"设备接入过程中，线路铺设的规范性对设备通信质量没有影响。（）","o":[],"a":"错误","p":80},{"n":430,"section":"judge","q":"存储设备的录像分辨率设置越高，录像质量就一定越好。（）","o":[],"a":"错误","p":80},{"n":431,"section":"judge","q":"存储设备循环录像功能设置时，间隔时间越短，对存储容量的占用就越大。（）","o":[],"a":"正确","p":80},{"n":432,"section":"judge","q":"音频设备的音量大小只能通过更换音频设备来调整。（）","o":[],"a":"错误","p":80},{"n":433,"section":"judge","q":"视频分析设备的误报率越低，系统性能就越好。（）","o":[],"a":"正确","p":80},{"n":434,"section":"judge","q":"摄像机焦距的调整方法应根据监控需求选择手动或自动调整。（）","o":[],"a":"正确","p":80},{"n":435,"section":"judge","q":"入侵报警系统探测器的灵敏度越高，误报率越低。（）","o":[],"a":"错误","p":81},{"n":436,"section":"judge","q":"视频分析设备的运动检测灵敏度越高，误报率一定越低。（）","o":[],"a":"错误","p":81},{"n":437,"section":"judge","q":"视频分析设备的运动检测区域应尽可能小，以减少误报。（）","o":[],"a":"错误","p":81},{"n":438,"section":"judge","q":"供电电压对前端设备的性能没有影响。（）","o":[],"a":"错误","p":81},{"n":439,"section":"judge","q":"操作台的布局应根据操作人员的身高和习惯进行个性化调整。（）","o":[],"a":"正确","p":81},{"n":440,"section":"judge","q":"显示设备色彩准确性检验时，使用色卡是常用的方法之一。（）","o":[],"a":"正确","p":81},{"n":441,"section":"judge","q":"监控中心UPS不间断电源的容量越大，供电稳定性越高。（）","o":[],"a":"错误","p":81},{"n":442,"section":"judge","q":"UPS不间断电源的供电能力检验，可以通过测量输出电压来判定。（）","o":[],"a":"错误","p":81},{"n":443,"section":"judge","q":"视频监控系统前端摄像机检验时，只需关注镜头焦距，其他参数无需检验。（）","o":[],"a":"错误","p":81},{"n":444,"section":"judge","q":"出入口控制系统道闸升降速度检验时，可以使用普通手表代替秒表进行计时。（）","o":[],"a":"错误","p":81},{"n":445,"section":"judge","q":"公共广播系统扬声器检验时，扬声器功率和频响范围是需要检验的关键参数。（）","o":[],"a":"正确","p":81},{"n":446,"section":"judge","q":"应急报警系统报警响应时间检验时，可以模拟真实报警信号进行测试。（）","o":[],"a":"正确","p":81},{"n":447,"section":"judge","q":"所有的前端设备参数设置都应由专业安装维护员进行。（）","o":[],"a":"正确","p":81},{"n":448,"section":"judge","q":"操作设备参数设置调整后的复核，应重点关注设备的操作便捷性和响应速度。（）","o":[],"a":"正确","p":81},{"n":449,"section":"judge","q":"在复核公共广播系统时，测试扬声器音量平衡性时，应确保所有扬声器同时发声。（）","o":[],"a":"正确","p":81},{"n":450,"section":"judge","q":"公共广播系统中，复核扬声器音量平衡性参数时，只需现场听测，无需使用测试工具。（）","o":[],"a":"错误","p":81},{"n":451,"section":"judge","q":"撰写中心设备通用参数设置调整复核说明报告时，无需提及复核的时间与地点。（）","o":[],"a":"错误","p":81},{"n":452,"section":"judge","q":"前端设备通用参数设置调整复核说明报告中，参数调整的原因和步骤可以合并描述。（）","o":[],"a":"错误","p":81},{"n":453,"section":"judge","q":"数据备份与恢复类别是中心设备操作中最重要的类别，因为它涉及到数据的安全性。（）","o":[],"a":"错误","p":81},{"n":454,"section":"judge","q":"中心设备的实时显示功能只能用于查看单个监控画面。（）","o":[],"a":"错误","p":82},{"n":455,"section":"judge","q":"记录查询功能可以通过日期、时间、摄像头等多种条件进行筛选。（）","o":[],"a":"正确","p":82},{"n":456,"section":"judge","q":"在进行记录查询前，确保录像文件的完整性和可访问性是资料准备的重要环节。（）","o":[],"a":"正确","p":82},{"n":457,"section":"judge","q":"门禁子系统的实时显示功能只能显示门禁的开关状态，无法显示其他信息。（）","o":[],"a":"错误","p":82},{"n":458,"section":"judge","q":"视频监控子系统的实时显示中，对画面的清晰度没有明确要求。（）","o":[],"a":"错误","p":82},{"n":459,"section":"judge","q":"查询安全防范系统记录时，无需对查询人员进行权限验证。（）","o":[],"a":"错误","p":82},{"n":460,"section":"judge","q":"实时显示安全防范系统信息时，仅依赖系统显示的数据即可，无需人工核对。（）","o":[],"a":"错误","p":82},{"n":461,"section":"judge","q":"常规中心设备的检查维护周期应根据设备使用情况和厂家建议确定。（）","o":[],"a":"正确","p":82},{"n":462,"section":"judge","q":"在中心设备检查维护中，标准化操作是确保系统稳定运行的重要因素之一。（）","o":[],"a":"正确","p":82},{"n":463,"section":"judge","q":"在进行中心设备维护时，可以直接关闭电源进行维护操作。（）","o":[],"a":"错误","p":82},{"n":464,"section":"judge","q":"UPS电源的日常检查维护中，电池寿命的监测是重要环节之一。（）","o":[],"a":"正确","p":82},{"n":465,"section":"judge","q":"机柜内部清洁时，可以使用湿布擦拭机柜内部，以去除灰尘。（）","o":[],"a":"错误","p":82},{"n":466,"section":"judge","q":"对于监控中心的网络设备，日常检查中仅需查看网络设备的指示灯，无需使用测试工具。（）","o":[],"a":"错误","p":82},{"n":467,"section":"judge","q":"监控中心音频设备日常维护时，音量大小应根据实际环境噪音进行调整，以保证声音清晰。（）","o":[],"a":"正确","p":82},{"n":468,"section":"judge","q":"中心设备测试验证时，应重点关注设备的工作温度和信号传输质量。（）","o":[],"a":"正确","p":82},{"n":469,"section":"judge","q":"更换中心设备部件时，应确保替换部件与原部件的规格和型号一致。（）","o":[],"a":"正确","p":82},{"n":470,"section":"judge","q":"中心设备测试验证时，对测试环境的要求不严格，可以在任意环境下进行。（）","o":[],"a":"错误","p":82},{"n":471,"section":"judge","q":"中心设备接线测试验证主要是为了确保接线的质量和稳定性。（）","o":[],"a":"正确","p":82},{"n":472,"section":"judge","q":"在维修中心设备接线时，应首先清理接触面，确保接触良好。（）","o":[],"a":"正确","p":82},{"n":473,"section":"judge","q":"在判定中心设备接线故障时，快速完成比精确诊断更重要。（）","o":[],"a":"错误","p":83},{"n":474,"section":"judge","q":"在测试验证中心设备环境时，必须使用示波器进行电源稳定性的判断。（）","o":[],"a":"错误","p":83},{"n":475,"section":"judge","q":"中心设备环境维护完成后，无需进行效果验证。（）","o":[],"a":"错误","p":83},{"n":476,"section":"judge","q":"中心设备系统故障通常只与软件有关，与硬件无关。（）","o":[],"a":"错误","p":83},{"n":477,"section":"judge","q":"在中心设备故障判定时，可以忽略相关技术文档。（）","o":[],"a":"错误","p":83},{"n":478,"section":"judge","q":"在进行中心设备维护维修时，应彻底分析问题原因，确保故障得到根本解决。（）","o":[],"a":"正确","p":83},{"n":479,"section":"judge","q":"门禁控制系统必须采用物理钥匙才能开启门禁。（）","o":[],"a":"错误","p":83},{"n":480,"section":"judge","q":"在安全防范系统的电路设计中，应优先考虑安全性，其次是功能性和效率。（）","o":[],"a":"正确","p":83},{"n":481,"section":"judge","q":"在安全防范系统中，使用加密技术可以有效保护传输的视频数据不被非法截获和篡改。（）","o":[],"a":"正确","p":83},{"n":482,"section":"judge","q":"在设计安全防范系统的网络时，只需要考虑带宽和延迟，无需关注网络拓扑结构。（）","o":[],"a":"错误","p":83},{"n":483,"section":"judge","q":"防火墙只能阻止外部攻击，对内部网络的安全威胁无能为力。（）","o":[],"a":"错误","p":83},{"n":484,"section":"judge","q":"安全防范系统只关注对物理空间的防护，不涉及信息安全。（）","o":[],"a":"错误","p":83},{"n":485,"section":"judge","q":"安全防范系统的基本功能包括实时监测和记录安全事件，确保安全事件的及时发现和处理。（）","o":[],"a":"正确","p":83},{"n":486,"section":"judge","q":"门禁控制系统是安全防范系统的重要组成部分，用于控制人员进出特定区域。（）","o":[],"a":"正确","p":83},{"n":487,"section":"judge","q":"安全防范系统具有高度的集成性，能够将多种安全防范措施集成为一个统一的整体。（）","o":[],"a":"正确","p":83},{"n":488,"section":"judge","q":"入侵报警系统的主要目的是通过探测入侵行为并发出报警信号，从而及时通知相关人员采取应对措施。（）","o":[],"a":"正确","p":83},{"n":489,"section":"judge","q":"高清摄像头比普通摄像头更容易受到光线和环境的影响。（）","o":[],"a":"错误","p":83},{"n":490,"section":"judge","q":"出入口控制系统只能用于控制人员的进出，不能用于其他安全功能。（）","o":[],"a":"错误","p":83},{"n":491,"section":"judge","q":"停车库（场）管理系统中的反向寻车功能可以提高停车效率，减少寻车时间。（）","o":[],"a":"正确","p":83},{"n":492,"section":"judge","q":"楼寓对讲系统只能通过有线方式实现通信。（）","o":[],"a":"错误","p":84},{"n":493,"section":"judge","q":"电子巡查系统可以与门禁系统联动，实现巡查人员的出入控制。（）","o":[],"a":"正确","p":84},{"n":494,"section":"judge","q":"防爆安全检查系统只能用于检测爆炸物品，不能用于其他目的。（）","o":[],"a":"错误","p":84},{"n":495,"section":"judge","q":"能耗管理系统可以帮助企业降低能源消耗，提高能源使用效率。（）","o":[],"a":"正确","p":84},{"n":496,"section":"judge","q":"根据《中华人民共和国劳动法》，劳动者有权拒绝执行危害生命安全和身体健康的指令。（）","o":[],"a":"正确","p":84},{"n":497,"section":"judge","q":"根据《关键信息基础设施安全保护条例》，关键信息基础设施运营者无需制定网络安全事件应急预案。（）","o":[],"a":"错误","p":84},{"n":498,"section":"judge","q":"安全技术防范系统建设的目标是保障公共安全，与个人隐私保护无关。（）","o":[],"a":"错误","p":84},{"n":499,"section":"judge","q":"在入侵报警系统中，前端探测器的安装高度应根据探测目标的具体位置来确定。（）","o":[],"a":"正确","p":84},{"n":500,"section":"judge","q":"在进行前端设备接入连接调整之前，应该详细记录当前设备的配置和状态。（）","o":[],"a":"正确","p":84}]</script>
+<script>
+(function () {
+  "use strict";
+
+  /* ==================== 数据 ==================== */
+  var BANK = JSON.parse(document.getElementById('bank').textContent);
+  var byNum = {};
+  BANK.forEach(function (q) { byNum[q.n] = q; });
+  var ALL = BANK.map(function (q) { return q.n; });
+  var TYPE_CN = { single: '单选题', multi: '多选题', judge: '判断题' };
+  var KEY_P = 'anfang500.v2.practice';
+  var KEY_T = 'anfang500.v2.test';
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+  function load(key, def) {
+    try { var v = JSON.parse(localStorage.getItem(key)); return v || def; } catch (e) { return def; }
+  }
+  function save(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+  }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function clock(ms) {
+    var s = Math.max(0, Math.floor(ms / 1000));
+    return pad(Math.floor(s / 60)) + ':' + pad(s % 60);
+  }
+  function lettersText(q, letters) {
+    if (!letters || !letters.length) return '';
+    if (q.section === 'judge') return letters[0];
+    return letters.slice().sort().join('');
+  }
+  function isRight(q, letters) {
+    if (!letters || !letters.length) return false;
+    if (q.section === 'multi') {
+      var a = letters.slice().sort().join('');
+      var b = q.a.split('').sort().join('');
+      return a === b;
+    }
+    return q.a === letters[0];
+  }
+  function itemsOf(q) {
+    if (q.section === 'judge') return [{ letter: '正确', text: '正确' }, { letter: '错误', text: '错误' }];
+    return q.o.map(function (o) { return { letter: o.charAt(0), text: o.slice(2) }; });
+  }
+  function stemWithAnswer(q) {
+    var box = q.section === 'judge' ? q.a : q.a;
+    return esc(q.q).replace(/（\s*）|\(\s*\)/, '<mark>（' + esc(box) + '）</mark>');
+  }
+  function prettyAnswer(q, letters) {
+    if (!letters || !letters.length) return '未答';
+    return q.section === 'judge' ? letters[0] : letters.slice().sort().join('');
+  }
+
+  /* ==================== 练习状态 ==================== */
+  var P = load(KEY_P, null) || { mode: 'order', idx: 0, order: null, picks: {}, open: {}, wrong: {}, shown: {} };
+  P.picks = P.picks || {}; P.open = P.open || {}; P.wrong = P.wrong || {}; P.shown = P.shown || {};
+
+  var M = { mode: 'order' };
+
+  function practiceOrder() {
+    if (P.mode === 'shuffle') return (P.order && P.order.length === ALL.length) ? P.order : ALL.slice();
+    if (P.mode === 'wrong') return Object.keys(P.wrong).map(Number).sort(function (a, b) { return a - b; });
+    return ALL.slice();
+  }
+  function savePractice() { save(KEY_P, P); }
+
+  function practiceStats() {
+    var picked = Object.keys(P.picks).length;
+    var right = 0, wrong = 0;
+    Object.keys(P.picks).forEach(function (n) {
+      var q = byNum[n]; if (!q) return;
+      if (isRight(q, P.picks[n])) right++; else wrong++;
+    });
+    return { picked: picked, right: right, wrong: wrong };
+  }
+
+  function renderStats() {
+    var s = practiceStats();
+    $('stats').innerHTML =
+      '已答 <b>' + s.picked + '</b> / 500　答对 <b>' + s.right + '</b>　' +
+      '<span class="w">答错 <b>' + s.wrong + '</b></span>　错题本 <b>' + Object.keys(P.wrong).length + '</b>';
+    var pct = Math.round(s.picked / 5);
+    $('pBar').style.width = pct + '%';
+    $('pStats').innerHTML =
+      '<div class="kv"><span>已作答</span><b>' + s.picked + ' 题</b></div>' +
+      '<div class="kv"><span>答对</span><b>' + s.right + ' 题</b></div>' +
+      '<div class="kv"><span>答错</span><b>' + s.wrong + ' 题</b></div>' +
+      '<div class="kv"><span>错题本</span><b>' + Object.keys(P.wrong).length + ' 题</b></div>';
+  }
+
+  /* ==================== 练习渲染 ==================== */
+  function renderPractice() {
+    var order = practiceOrder();
+    if (!order.length) {
+      $('pTag').textContent = '—';
+      $('pIndex').textContent = '当前模式没有题目';
+      $('pPdf').textContent = '';
+      $('pStem').textContent = P.mode === 'wrong' ? '错题本还是空的，先去刷题吧。' : '当前模式没有题目';
+      $('pOpts').innerHTML = '';
+      $('pFeedback').textContent = '';
+      $('pFeedback').className = 'feedback';
+      $('pConfirmMulti').classList.add('hide');
+      renderStats();
+      return;
+    }
+    P.idx = Math.max(0, Math.min(P.idx, order.length - 1));
+    var num = order[P.idx], q = byNum[num];
+    var picks = P.picks[num] || [];
+    var revealed = !!P.open[num];
+
+    $('pTag').textContent = TYPE_CN[q.section];
+    $('pTag').className = 'tag ' + q.section;
+    $('pIndex').textContent = '第 ' + (P.idx + 1) + ' / ' + order.length + ' 题　·　题库第 ' + num + ' 题';
+    $('pPdf').textContent = '原题库 PDF 第 ' + q.p + ' 页';
+    $('pStem').textContent = q.q;
+
+    var html = '';
+    itemsOf(q).forEach(function (it, i) {
+      var cls = 'opt', mark = '';
+      var correct = q.section === 'judge' ? (q.a === it.letter) : (q.a.indexOf(it.letter) >= 0);
+      var picked = picks.indexOf(it.letter) >= 0;
+      if (revealed) {
+        if (correct) { cls += ' right'; mark = '正确答案'; }
+        else if (picked) { cls += ' wrongpick'; mark = '你的选择'; }
+        else cls += ' dim';
+      } else if (picked) cls += ' picked';
+      html += '<button class="' + cls + '" data-i="' + i + '"' + (revealed ? ' disabled' : '') + '>' +
+        '<span class="badge">' + (q.section === 'judge' ? (it.letter === '正确' ? '√' : '×') : it.letter) + '</span>' +
+        '<span class="txt">' + esc(it.text) + '</span>' +
+        (mark ? '<span class="mark">' + mark + '</span>' : '') +
+        '</button>';
+    });
+    $('pOpts').innerHTML = html;
+    Array.prototype.forEach.call($('pOpts').querySelectorAll('.opt'), function (b) {
+      b.onclick = function () { practicePick(Number(b.getAttribute('data-i'))); };
+    });
+
+    var fb = $('pFeedback');
+    if (revealed) {
+      var ok = isRight(q, picks);
+      fb.className = 'feedback ' + (ok ? 'ok' : 'no');
+      fb.innerHTML = (picks.length ? (ok ? '✔ 回答正确' : '✘ 回答错误') : '答案') +
+        '　正确答案：<span class="ans">' + esc(prettyAnswer(q, q.section === 'judge' ? [q.a] : q.a.split(''))) + '</span>' +
+        '　·　原题库 PDF 第 ' + q.p + ' 页';
+    } else {
+      fb.className = 'feedback';
+      fb.textContent = q.section === 'multi'
+        ? (picks.length ? '已选 ' + picks.length + ' 项，选好后点击「确认答案」' : '多选题：可选多项，选好后点击「确认答案」')
+        : '';
+    }
+
+    var multi = q.section === 'multi' && !revealed;
+    $('pConfirmMulti').classList.toggle('hide', !multi);
+    $('pConfirmMulti').disabled = !picks.length;
+    renderStats();
+  }
+
+  function practicePick(i) {
+    var order = practiceOrder();
+    if (!order.length) return;
+    var num = order[P.idx], q = byNum[num];
+    if (P.open[num]) return;
+    var it = itemsOf(q)[i];
+    if (!it) return;
+
+    if (q.section === 'multi') {
+      var picks = (P.picks[num] || []).slice();
+      var k = picks.indexOf(it.letter);
+      if (k >= 0) picks.splice(k, 1); else picks.push(it.letter);
+      if (picks.length) P.picks[num] = picks; else delete P.picks[num];
+      savePractice(); renderPractice(); return;
+    }
+
+    var curIdx = P.idx;
+    P.picks[num] = [it.letter];
+    P.open[num] = true;
+    if (isRight(q, [it.letter])) delete P.wrong[num];
+    else P.wrong[num] = true;
+    savePractice(); renderStats(); renderPractice();
+
+    if (P.mode !== 'wrong') {
+      setTimeout(function () {
+        if (P.idx === curIdx && P.idx < order.length - 1) { P.idx++; savePractice(); renderPractice(); }
+      }, 620);
+    }
+  }
+
+  function practiceConfirmMulti() {
+    var order = practiceOrder();
+    if (!order.length) return;
+    var num = order[P.idx], q = byNum[num];
+    var picks = P.picks[num] || [];
+    if (!picks.length) { toast('请先选择答案'); return; }
+    P.open[num] = true;
+    if (isRight(q, picks)) delete P.wrong[num]; else P.wrong[num] = true;
+    savePractice(); renderPractice();
+  }
+
+  function practiceGo(delta) {
+    var order = practiceOrder();
+    if (!order.length) return;
+    var next = P.idx + delta;
+    if (next < 0 || next >= order.length) { toast(delta < 0 ? '已经是第一题' : '已经是最后一题'); return; }
+    P.idx = next; savePractice(); renderPractice();
+  }
+
+  function practiceJump() {
+    var v = parseInt($('pJump').value, 10);
+    if (isNaN(v)) { toast('请输入题号'); return; }
+    var order = practiceOrder();
+    var idx = order.indexOf(v);
+    if (idx < 0) {
+      toast(byNum[v] ? ('题库第 ' + v + ' 题不在当前模式里（' +
+        (P.mode === 'wrong' ? '错题本' : P.mode === 'shuffle' ? '乱序列表' : '当前列表') + '）') : ('题库没有第 ' + v + ' 题'));
+      return;
+    }
+    P.idx = idx; savePractice(); renderPractice();
+    $('pJump').value = '';
+  }
+
+  /* ==================== 模考状态 ==================== */
+  var T = load(KEY_T, null);
+  if (T && (!T.nums || !T.nums.length)) T = null;
+
+  function saveTest() { if (T) save(KEY_T, T); }
+
+  function testPicks(num) { return (T.picks[num] || []).slice(); }
+  function testDone() { if (!T) return 0; return T.nums.filter(function (n) { return (T.picks[n] || []).length; }).length; }
+
+  function startTest() {
+    if (T && !T.submitted) {
+      confirmDialog('提示', '当前有一套模考还没交卷，要重新抽题吗？', '重新开始', function () {
+        newTest();
+      });
+      return;
+    }
+    confirmDialog('随机 100 题模考',
+      '将从 500 题中随机抽取 100 题（不重复），过程中不显示答案，交卷后逐题对照原题库核对。\n\n现在开始吗？',
+      '开始', function () { newTest(); });
+  }
+
+  function newTest() {
+    var pool = ALL.slice();
+    for (var i = pool.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    }
+    T = { nums: pool.slice(0, 100), picks: {}, idx: 0, startTs: Date.now(), endTs: 0, submitted: false };
+    saveTest();
+    showTest();
+    startClock();
+  }
+
+  function showTest() {
+    $('practiceView').classList.add('hide');
+    $('testView').classList.remove('hide');
+    renderTest();
+  }
+  function showPractice() {
+    $('testView').classList.add('hide');
+    $('practiceView').classList.remove('hide');
+    renderPractice();
+  }
+
+  function renderTest() {
+    if (!T) return;
+    var n = T.nums.length;
+    var done = testDone();
+    $('tProg').textContent = '卷面第 ' + (T.idx + 1) + ' / ' + n + ' 题 · 已答 ' + done;
+    $('tDone').textContent = done;
+    $('tBlank').textContent = n - done;
+    $('tElapsed').textContent = clock((T.submitted ? T.endTs : Date.now()) - T.startTs);
+    $('tClock').textContent = clock((T.submitted ? T.endTs : Date.now()) - T.startTs);
+    $('tSubmit').classList.toggle('hide', T.submitted);
+    $('tReportBtn').classList.toggle('hide', !T.submitted);
+
+    var num = T.nums[T.idx], q = byNum[num];
+    $('tTag').textContent = TYPE_CN[q.section];
+    $('tTag').className = 'tag ' + q.section;
+    $('tIndex').textContent = '卷面第 ' + (T.idx + 1) + ' 题 · 题库第 ' + num + ' 题';
+    $('tPdf').textContent = T.submitted ? ('原题库 PDF 第 ' + q.p + ' 页') : '';
+
+    var picks = testPicks(num);
+    $('tStem').textContent = q.q;
+
+    var html = '';
+    itemsOf(q).forEach(function (it, i) {
+      var cls = 'opt', mark = '';
+      var correct = q.section === 'judge' ? (q.a === it.letter) : (q.a.indexOf(it.letter) >= 0);
+      var picked = picks.indexOf(it.letter) >= 0;
+      if (T.submitted) {
+        if (correct) { cls += ' right'; mark = '正确答案'; }
+        else if (picked) { cls += ' wrongpick'; mark = '你的选择'; }
+        else cls += ' dim';
+      } else if (picked) cls += ' picked';
+      html += '<button class="' + cls + '" data-i="' + i + '"' + (T.submitted ? ' disabled' : '') + '>' +
+        '<span class="badge">' + (q.section === 'judge' ? (it.letter === '正确' ? '√' : '×') : it.letter) + '</span>' +
+        '<span class="txt">' + esc(it.text) + '</span>' +
+        (mark ? '<span class="mark">' + mark + '</span>' : '') +
+        '</button>';
+    });
+    $('tOpts').innerHTML = html;
+    Array.prototype.forEach.call($('tOpts').querySelectorAll('.opt'), function (b) {
+      b.onclick = function () { testPick(Number(b.getAttribute('data-i'))); };
+    });
+
+    var fb = $('tFeedback');
+    if (T.submitted) {
+      var ok = isRight(q, picks);
+      fb.className = 'feedback ' + (!picks.length ? '' : ok ? 'ok' : 'no');
+      fb.innerHTML = !picks.length ? '本题未作答' :
+        (ok ? '✔ 回答正确' : '✘ 回答错误') + '　正确答案：<span class="ans">' + esc(q.a) + '</span>';
+    } else {
+      fb.className = 'feedback';
+      fb.textContent = q.section === 'multi' ? '多选题：可选多项，交卷时统一判定' : '交卷前不显示答案，可随时修改';
+    }
+  }
+
+  function testPick(i) {
+    if (!T || T.submitted) return;
+    var num = T.nums[T.idx], q = byNum[num];
+    var it = itemsOf(q)[i];
+    if (!it) return;
+    if (q.section === 'multi') {
+      var picks = testPicks(num);
+      var k = picks.indexOf(it.letter);
+      if (k >= 0) picks.splice(k, 1); else picks.push(it.letter);
+      if (picks.length) T.picks[num] = picks; else delete T.picks[num];
+    } else {
+      T.picks[num] = [it.letter];
+    }
+    saveTest(); renderTest();
+  }
+
+  function testGo(delta) {
+    if (!T) return;
+    var next = T.idx + delta;
+    if (next < 0 || next >= T.nums.length) { toast(delta < 0 ? '已经是第一题' : '最后一题，可以交卷了'); return; }
+    T.idx = next; saveTest(); renderTest();
+  }
+
+  function testJump() {
+    var v = parseInt($('tJump').value, 10);
+    if (isNaN(v)) { toast('请输入卷面序号 1-100'); return; }
+    var idx = -1;
+    if (v >= 1 && v <= T.nums.length) idx = v - 1;
+    if (idx < 0) idx = T.nums.indexOf(v);
+    if (idx < 0) { toast('本次模考没有第 ' + v + ' 题（卷面 1-100 或题库题号）'); return; }
+    T.idx = idx; saveTest(); renderTest(); $('tJump').value = '';
+  }
+
+  /* ==================== 交卷与成绩单 ==================== */
+  function submitTest() {
+    if (!T || T.submitted) return;
+    var blanks = T.nums.filter(function (n) { return !(T.picks[n] || []).length; }).length;
+    var ask = blanks
+      ? '还有 ' + blanks + ' 题未作答，将计为「未答」（不算答错）。\n确定交卷吗？'
+      : '确定交卷并查看成绩吗？';
+    confirmDialog('交卷', ask, '交卷', function () {
+      T.submitted = true;
+      T.endTs = Date.now();
+      saveTest();
+      renderTest();
+      openReport();
+    });
+  }
+
+  function gradeTest() {
+    var rows = [];
+    var right = 0, wrong = 0, blank = 0;
+    T.nums.forEach(function (num, i) {
+      var q = byNum[num];
+      var picks = T.picks[num] || [];
+      var status = !picks.length ? 'blank' : (isRight(q, picks) ? 'right' : 'wrong');
+      if (status === 'right') right++;
+      else if (status === 'wrong') wrong++;
+      else blank++;
+      rows.push({ i: i, num: num, q: q, picks: picks, status: status });
+    });
+    return { rows: rows, right: right, wrong: wrong, blank: blank };
+  }
+
+  function openReport(filter) {
+    var g = gradeTest();
+    var total = T.nums.length;
+    var used = (T.endTs || Date.now()) - T.startTs;
+    var score = Math.round(g.right * 1000 / Math.max(1, total)) / 10;
+    var color = score >= 60 ? 'var(--green)' : 'var(--red)';
+    var onlyBad = filter === 'bad';
+    var badCount = g.wrong + g.blank;
+
+    var html = '';
+    html += '<button class="x" id="dlgX">&times;</button>';
+    html += '<h2>模考成绩单</h2>';
+    html += '<div class="sub">随机 100 题模考 · 交卷时间 ' + new Date(T.endTs).toLocaleString('zh-CN') +
+      ' · 正确答案均取自原题库 PDF</div>';
+
+    html += '<div class="scoreboard">' +
+      '<div class="big" style="color:' + color + '">' + score + '<small>分</small></div>' +
+      '<div class="meta">' +
+      '<span>答对 <b style="color:var(--green)">' + g.right + '</b> / ' + total + '</span>' +
+      '<span>答错 <b style="color:var(--red)">' + g.wrong + '</b></span>' +
+      '<span>未答 <b>' + g.blank + '</b></span>' +
+      '<span>用时 <b>' + clock(used) + '</b></span>' +
+      '</div></div>';
+
+    html += '<div class="report-tools">' +
+      '<button class="btn ' + (onlyBad ? '' : 'primary') + '" id="dlgAll">全部 ' + total + ' 题</button>' +
+      '<button class="btn ' + (onlyBad ? 'primary' : '') + '" id="dlgBad">只看错题 / 未答 ' + badCount + '</button>' +
+      '<button class="btn ghost" id="dlgOpenAll">展开全部原题</button>' +
+      '<button class="btn ghost" id="dlgCopy">复制对照表</button>' +
+      '<button class="btn ghost" id="dlgPrint">打印 / 另存 PDF</button>' +
+      '<span class="sp"></span>' +
+      '<button class="btn" id="dlgRedoBad"' + (badCount ? '' : ' disabled') + '>重做错题</button>' +
+      '<button class="btn" id="dlgAddWrong">错题加入错题本</button>' +
+      '<button class="btn" id="dlgAgain">再来一套</button>' +
+      '<button class="btn primary" id="dlgBack">返回练习</button>' +
+      '</div>';
+
+    html += '<table class="cmp" id="cmpTable"><thead><tr>' +
+      '<th style="width:52px">卷面</th><th style="width:64px">题库</th><th style="width:64px">题型</th>' +
+      '<th style="width:88px">你的答案</th><th style="width:88px">正确答案</th><th style="width:86px">结果</th>' +
+      '<th>原题库对照（含答案）</th></tr></thead><tbody>';
+
+    g.rows.forEach(function (r) {
+      if (onlyBad && r.status === 'right') return;
+      var q = r.q;
+      var cls = r.status === 'right' ? 'r' : r.status === 'wrong' ? 'w' : 'b';
+      var pill = r.status === 'right'
+        ? '<span class="pill r">✓ 答对</span>'
+        : r.status === 'wrong' ? '<span class="pill w">✗ 答错</span>' : '<span class="pill b">未答</span>';
+      var mine = prettyAnswer(q, r.picks);
+      var mineCls = r.status === 'right' ? 'ans-ok' : r.status === 'wrong' ? 'ans-no' : 'ans-blank';
+
+      var opts = '';
+      itemsOf(q).forEach(function (it) {
+        var good = q.section === 'judge' ? (q.a === it.letter) : (q.a.indexOf(it.letter) >= 0);
+        var isMine = r.picks.indexOf(it.letter) >= 0;
+        var c = (good ? 'ok' : '') + (isMine && !good ? ' mine' : '');
+        opts += '<li class="' + c + '">' + (q.section === 'judge' ? (it.letter === '正确' ? '√' : '×') + ' ' : it.letter + '、') +
+          esc(it.text) + (good ? '　← 正确答案' : '') + (isMine && !good ? '　← 你选的' : '') + '</li>';
+      });
+
+      html += '<tr class="' + cls + '">' +
+        '<td class="mono">' + (r.i + 1) + '</td>' +
+        '<td class="mono">#' + r.num + '</td>' +
+        '<td>' + TYPE_CN[q.section] + '</td>' +
+        '<td class="' + mineCls + '">' + esc(mine) + '</td>' +
+        '<td class="mono">' + esc(q.a) + '</td>' +
+        '<td>' + pill + '</td>' +
+        '<td><details class="orig"><summary>原题 · PDF 第 ' + q.p + ' 页</summary>' +
+        '<div class="origbox"><div class="o-stem">' + stemWithAnswer(q) + '</div><ul>' + opts + '</ul>' +
+        '<div class="src">出处：原题库第 ' + q.n + ' 题（PDF 第 ' + q.p + ' 页）' +
+        (q.n <= 4 ? '，该页为扫描件，题面按 PDF 首页校订' : '') + '</div></div></details></td>' +
+        '</tr>';
+    });
+
+    html += '</tbody></table>';
+    html += '<div class="row" style="color:var(--muted);font-size:12.5px">' +
+      '提示：点「原题 · PDF 第 x 页」展开该题在题库中的原始题面与答案；「复制对照表」可粘贴到 Excel 逐条核对。</div>';
+
+    openDialog(html);
+
+    $('dlgX').onclick = closeDialog;
+    $('dlgAll').onclick = function () { openReport('all'); };
+    $('dlgBad').onclick = function () { openReport('bad'); };
+    $('dlgOpenAll').onclick = function () {
+      var all = $('cmpTable').querySelectorAll('details.orig');
+      Array.prototype.forEach.call(all, function (d) { d.open = true; });
+    };
+    $('dlgCopy').onclick = function () { copyReport(g.rows); };
+    $('dlgPrint').onclick = function () { window.print(); };
+    $('dlgRedoBad').onclick = function () { redoBad(g); };
+    $('dlgAddWrong').onclick = function () { addWrongBook(g); };
+    $('dlgAgain').onclick = function () { closeDialog(); newTest(); };
+    $('dlgBack').onclick = function () { closeDialog(); exitTest(true); };
+  }
+
+  function copyReport(rows) {
+    var lines = ['卷面\t题库\t题型\t你的答案\t正确答案\t结果\tPDF页码'];
+    rows.forEach(function (r) {
+      lines.push([
+        r.i + 1, '#' + r.num, TYPE_CN[r.q.section],
+        prettyAnswer(r.q, r.picks), r.q.a,
+        r.status === 'right' ? '答对' : r.status === 'wrong' ? '答错' : '未答',
+        'PDF p.' + r.q.p
+      ].join('\t'));
+    });
+    var text = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast('对照表已复制到剪贴板'); },
+        function () { fallbackCopy(text); });
+    } else fallbackCopy(text);
+  }
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('对照表已复制'); } catch (e) { toast('复制失败，请手动选择'); }
+    document.body.removeChild(ta);
+  }
+
+  function addWrongBook(g) {
+    var added = 0;
+    g.rows.forEach(function (r) {
+      if (r.status === 'right') return;
+      if (!P.wrong[r.num]) { P.wrong[r.num] = true; added++; }
+    });
+    savePractice(); renderStats();
+    toast(added ? ('已把 ' + added + ' 道错题/未答题加入练习错题本') : '这些题已经在错题本里了');
+  }
+
+  function redoBad(g) {
+    var nums = g.rows.filter(function (r) { return r.status !== 'right'; }).map(function (r) { return r.num; });
+    if (!nums.length) { toast('本次没有错题'); return; }
+    nums.forEach(function (n) { P.wrong[n] = true; });
+    closeDialog();
+    exitTest(true);
+    setMode('wrong', true);
+    toast('已进入错题重做（' + nums.length + ' 题）');
+  }
+
+  function exitTest(silent) {
+    if (!T) { showPractice(); return; }
+    if (!silent) {
+      if (!T.submitted) {
+        confirmDialog('退出模考', '模考还没有交卷，退出后本次作答将保留在「上次模考」中，确定退出吗？', '退出', function () {
+          exitTest(true);
+        });
+        return;
+      }
+    }
+    showPractice();
+    renderLastTestButton();
+  }
+
+  /* ==================== 答题卡 ==================== */
+  function openPracticeCard() {
+    var order = practiceOrder();
+    var html = '<button class="x" id="dlgX">&times;</button><h2>答题卡</h2>' +
+      '<div class="sub">共 ' + order.length + ' 题 · 点击题目跳转</div>' +
+      '<div class="legend"><span><i style="background:var(--green-bg);border:1px solid var(--green-bd)"></i>答对</span>' +
+      '<span><i style="background:var(--red-bg);border:1px solid var(--red-bd)"></i>答错</span>' +
+      '<span><i style="background:var(--blue-l);border:1px solid var(--blue-b)"></i>已作答</span>' +
+      '<span><i style="background:#eef2f7"></i>未作答</span></div>' +
+      '<div class="grid">';
+    order.forEach(function (n, i) {
+      var q = byNum[n], cls = 'cell';
+      if (P.picks[n] && P.picks[n].length) cls += P.open[n] ? (isRight(q, P.picks[n]) ? ' right' : ' wrong') : ' done';
+      if (i === P.idx) cls += ' cur';
+      html += '<div class="' + cls + '" data-i="' + i + '">' + n + '</div>';
+    });
+    html += '</div>';
+    openDialog(html);
+    $('dlgX').onclick = closeDialog;
+    Array.prototype.forEach.call($('dialog').querySelectorAll('.cell'), function (c) {
+      c.onclick = function () { P.idx = Number(c.getAttribute('data-i')); savePractice(); closeDialog(); renderPractice(); };
+    });
+  }
+
+  function openTestCard() {
+    if (!T) return;
+    var submitted = T.submitted;
+    var html = '<button class="x" id="dlgX">&times;</button><h2>答题卡</h2>' +
+      '<div class="sub">卷面 1–100 题（格内为题库题号），点击跳转</div>';
+    if (submitted) {
+      html += '<div class="legend"><span><i style="background:var(--green-bg);border:1px solid var(--green-bd)"></i>答对</span>' +
+        '<span><i style="background:var(--red-bg);border:1px solid var(--red-bd)"></i>答错</span>' +
+        '<span><i style="background:#fff;border:1px solid var(--line)"></i>未答</span></div>';
+    } else {
+      html += '<div class="legend"><span><i style="background:var(--blue-l);border:1px solid var(--blue-b)"></i>已作答</span>' +
+        '<span><i style="background:#eef2f7"></i>未作答</span></div>';
+    }
+    html += '<div class="grid">';
+    T.nums.forEach(function (n, i) {
+      var q = byNum[n], cls = 'cell';
+      var picked = T.picks[n] && T.picks[n].length;
+      if (submitted) cls += picked ? (isRight(q, T.picks[n]) ? ' right' : ' wrong') : ' blank';
+      else if (picked) cls += ' done';
+      if (i === T.idx) cls += ' cur';
+      html += '<div class="' + cls + '" data-i="' + i + '" title="卷面第 ' + (i + 1) + ' 题 · 题库第 ' + n + ' 题">' + n + '</div>';
+    });
+    html += '</div>';
+    openDialog(html);
+    $('dlgX').onclick = closeDialog;
+    Array.prototype.forEach.call($('dialog').querySelectorAll('.cell'), function (c) {
+      c.onclick = function () { T.idx = Number(c.getAttribute('data-i')); saveTest(); closeDialog(); renderTest(); };
+    });
+  }
+
+  /* ==================== 弹层 ==================== */
+  function openDialog(html) {
+    $('dialog').innerHTML = html;
+    $('dialog').classList.add('show');
+    $('mask').classList.add('show');
+    $('mask').onclick = closeDialog;
+  }
+  function closeDialog() {
+    $('dialog').classList.remove('show');
+    $('mask').classList.remove('show');
+  }
+  function confirmDialog(title, msg, okText, onOk) {
+    var html = '<h2>' + esc(title) + '</h2><p style="white-space:pre-line;color:#334155;line-height:1.8">' + esc(msg) + '</p>' +
+      '<div class="row"><button class="btn" id="cfNo">取消</button>' +
+      '<button class="btn primary" id="cfYes">' + esc(okText || '确定') + '</button></div>';
+    openDialog(html);
+    $('cfNo').onclick = closeDialog;
+    $('cfYes').onclick = function () { closeDialog(); onOk(); };
+  }
+  var toastTimer = null;
+  function toast(msg) {
+    var el = $('toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'toast';
+      el.style.cssText = 'position:fixed;left:50%;bottom:34px;transform:translateX(-50%);background:#0f172a;color:#fff;' +
+        'padding:9px 18px;border-radius:999px;font-size:13px;z-index:120;opacity:0;transition:.25s;pointer-events:none';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg; el.style.opacity = '1';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.style.opacity = '0'; }, 1900);
+  }
+
+  /* ==================== 模式与初始化 ==================== */
+  function setMode(mode, silent) {
+    P.mode = mode;
+    if (mode === 'shuffle') {
+      var arr = ALL.slice();
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+      }
+      P.order = arr;
+    }
+    P.idx = 0;
+    savePractice();
+    showPractice();
+    renderModes();
+    if (!silent) toast(mode === 'order' ? '已切换到顺序刷题' : mode === 'shuffle' ? '已重新打乱顺序' : '进入错题重做');
+  }
+
+  function renderModes() {
+    $('mOrder').setAttribute('aria-pressed', P.mode === 'order' ? 'true' : 'false');
+    $('mShuffle').setAttribute('aria-pressed', P.mode === 'shuffle' ? 'true' : 'false');
+    $('btnWrong').setAttribute('aria-pressed', P.mode === 'wrong' ? 'true' : 'false');
+  }
+
+  function renderLastTestButton() {
+    var btn = $('sideLast');
+    if (T && T.submitted) {
+      var g = gradeTest();
+      var score = Math.round(g.right * 1000 / Math.max(1, T.nums.length)) / 10;
+      btn.classList.remove('hide');
+      btn.textContent = '上次模考成绩 ' + score + ' 分';
+    } else {
+      btn.classList.add('hide');
+    }
+  }
+
+  var clockTimer = null;
+  function startClock() {
+    if (clockTimer) return;
+    clockTimer = setInterval(function () {
+      if (!T || T.submitted) return;
+      var txt = clock(Date.now() - T.startTs);
+      $('tClock').textContent = txt;
+      $('tElapsed').textContent = txt;
+    }, 1000);
+  }
+
+  /* ==================== 事件绑定 ==================== */
+  $('mOrder').onclick = function () { if (P.mode !== 'order') setMode('order'); };
+  $('mShuffle').onclick = function () { setMode('shuffle'); };
+  $('btnWrong').onclick = function () {
+    if (!Object.keys(P.wrong).length) { toast('错题本还是空的，先把答错的题攒起来吧'); return; }
+    setMode('wrong');
+  };
+  $('btnTest').onclick = startTest;
+  $('btnShowAll').onclick = function () {
+    confirmDialog('显示全部答案', '将把 500 道题的答案全部标出（不回填你的作答，也不影响错题本）。继续吗？', '显示', function () {
+      ALL.forEach(function (n) { P.open[n] = true; });
+      savePractice();
+      if (P.mode === 'wrong') setMode('order', true);
+      showPractice(); renderPractice();
+      toast('已显示全部答案');
+    });
+  };
+  $('btnReset').onclick = function () {
+    confirmDialog('重置', '将清空全部练习记录、错题本和上次模考成绩，确定吗？', '清空', function () {
+      try { localStorage.removeItem(KEY_P); localStorage.removeItem(KEY_T); } catch (e) {}
+      P = { mode: 'order', idx: 0, order: null, picks: {}, open: {}, wrong: {}, shown: {} };
+      T = null;
+      showPractice(); renderModes(); renderPractice(); renderLastTestButton();
+      toast('已重置');
+    });
+  };
+
+  $('pPrev').onclick = function () { practiceGo(-1); };
+  $('pNext').onclick = function () { practiceGo(1); };
+  $('pConfirmMulti').onclick = practiceConfirmMulti;
+  $('pJumpBtn').onclick = practiceJump;
+  $('pJump').onkeydown = function (e) { if (e.key === 'Enter') practiceJump(); };
+  $('pCard').onclick = openPracticeCard;
+  $('sideCard').onclick = openPracticeCard;
+  $('sideLast').onclick = function () { showTest(); openReport('all'); };
+
+  $('tPrev').onclick = function () { testGo(-1); };
+  $('tNext').onclick = function () { testGo(1); };
+  $('tJumpBtn').onclick = testJump;
+  $('tJump').onkeydown = function (e) { if (e.key === 'Enter') testJump(); };
+  $('tCardBtn').onclick = openTestCard;
+  $('tSubmit').onclick = submitTest;
+  $('tReportBtn').onclick = function () { openReport('all'); };
+  $('tExit').onclick = function () { exitTest(false); };
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /input|textarea/i.test(e.target.tagName)) return;
+    if ($('dialog').classList.contains('show')) {
+      if (e.key === 'Escape') closeDialog();
+      return;
+    }
+    var inTest = !$('testView').classList.contains('hide');
+    var opts = document.querySelectorAll((inTest ? '#tOpts' : '#pOpts') + ' .opt');
+    var map = { a: 0, b: 1, c: 2, d: 3 };
+    if (e.key >= '1' && e.key <= '4' && !inTest) { var k = Number(e.key) - 1; if (opts[k]) opts[k].click(); return; }
+    var k2 = map[e.key.toLowerCase()];
+    if (k2 !== undefined && opts[k2] && !(inTest ? T && T.submitted : false)) { opts[k2].click(); return; }
+    if (e.key === 'ArrowLeft') { inTest ? testGo(-1) : practiceGo(-1); }
+    else if (e.key === 'ArrowRight') { inTest ? testGo(1) : practiceGo(1); }
+    else if (e.key === 'Enter') {
+      if (!inTest && !$('pConfirmMulti').classList.contains('hide')) practiceConfirmMulti();
+      else if (inTest) { /* 交卷需显式点击 */ }
+      else practiceGo(1);
+    }
+  });
+
+  /* ==================== 启动 ==================== */
+  window.addEventListener('beforeunload', function () { if (T) saveTest(); });
+
+  renderModes();
+  renderStats();
+  if (T && !T.submitted) {
+    showTest();
+    startClock();
+    toast('已恢复未交卷的模考，继续作答');
+  } else {
+    showPractice();
+    renderLastTestButton();
+    if (T && T.submitted) {
+      var g0 = gradeTest();
+      var sc0 = Math.round(g0.right * 1000 / Math.max(1, T.nums.length)) / 10;
+      setTimeout(function () { toast('上次模考 ' + sc0 + ' 分，可点右侧「上次模考成绩」查看'); }, 500);
+    }
+  }
+})();
+</script>
+</body>
+</html>
+
+
+
+
