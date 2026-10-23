@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -213,6 +213,18 @@ details.orig summary:hover{text-decoration:underline}
 .origbox li.ok{color:var(--green);font-weight:700}
 .origbox li.mine{background:var(--red-bg);border-radius:4px;padding-left:4px}
 .origbox .src{font-size:11.5px;color:var(--muted);margin-top:8px}
+.linkbtn{color:var(--blue);text-decoration:underline;text-underline-offset:2px;font-size:12.5px;font-weight:600;padding:0;background:none;border:0;cursor:pointer}
+.linkbtn:hover{color:var(--blue-d)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.origin-card .o-stem{font-size:15px}
+.origin-card .o-opts{font-size:13.5px}
+.origin-card .o-opts li{padding:3px 6px;border-radius:6px}
+.origin-card .o-opts li.ok{background:var(--green-bg)}
+.origin-card .o-opts li.mine{background:var(--red-bg)}
+.origin-card .o-meta{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);font-size:12.5px;color:#475569}
+.origin-card .o-meta b{color:#0f172a}
+.origin-card .o-meta b.ok{color:var(--green)}
+.origin-card .o-meta b.no{color:var(--red)}
 
 /* 打印 */
 @media print{
@@ -264,6 +276,7 @@ details.orig summary:hover{text-decoration:underline}
           <button class="btn ghost" id="pPrev">← 上一题</button>
           <button class="btn ghost" id="pNext">下一题 →</button>
           <button class="btn ghost hide" id="pConfirmMulti">确认答案</button>
+          <button class="btn ghost" id="pOrigin" title="查看原题库题面与答案">对照原题库</button>
           <button class="btn ghost" id="pCard">答题卡</button>
           <div class="jump">
             <span>跳到题库题号</span>
@@ -282,6 +295,7 @@ details.orig summary:hover{text-decoration:underline}
         <div class="kv"><span>答案出处</span><b>原题库 PDF</b></div>
         <div class="note">
           题库与《智慧安防技术"工匠之星"职业技能竞赛初赛理论题库》一致；每题标注 PDF 页码，便于核对。
+          答题后点「对照原题库」或按 O 键，可查看该题在原题库中的完整题面（答案已标注）。
           练习记录保存在本机浏览器，换浏览器或清缓存会丢失。
         </div>
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
@@ -319,6 +333,7 @@ details.orig summary:hover{text-decoration:underline}
           <button class="btn ghost" id="tPrev">← 上一题</button>
           <button class="btn ghost" id="tNext">下一题 →</button>
           <button class="btn ghost hide" id="tReportBtn">查看成绩单</button>
+          <button class="btn ghost hide" id="tOrigin" title="交卷后可对照原题库">对照原题库</button>
           <div class="jump">
             <span>跳到卷面第</span>
             <input id="tJump" type="number" min="1" max="100" inputmode="numeric" placeholder="1-100">
@@ -337,6 +352,7 @@ details.orig summary:hover{text-decoration:underline}
         <div class="note">
           交卷后逐题列出：你的答案、题库正确答案、原题库题面（答案已标注）与 PDF 页码，
           可直接与 PDF 对照核验。未作答的题目单独计为「未答」，不计入答错。
+          交卷后每题还可点「对照原题库」或按 O 键查看原题面。
         </div>
       </aside>
     </div>
@@ -405,6 +421,62 @@ details.orig summary:hover{text-decoration:underline}
     return q.section === 'judge' ? letters[0] : letters.slice().sort().join('');
   }
 
+  /* ==================== 原题库对照（所有模式通用） ==================== */
+  var ORIGIN = null;   // { list: [题号], idx: 位置, picker: fn(num)->letters }
+
+  function openOriginPanel(list, idx, picker) {
+    if (!list || !list.length) { toast('当前列表没有题目'); return; }
+    ORIGIN = { list: list.slice(), idx: Math.max(0, Math.min(idx, list.length - 1)), picker: picker };
+    renderOriginPanel();
+  }
+
+  function renderOriginPanel() {
+    if (!ORIGIN) return;
+    var list = ORIGIN.list, i = ORIGIN.idx, num = list[i], q = byNum[num];
+    var picks = ORIGIN.picker ? (ORIGIN.picker(num) || []) : [];
+    var right = isRight(q, picks);
+    var ansText = prettyAnswer(q, q.section === 'judge' ? [q.a] : q.a.split(''));
+
+    var html = '<button class="x" id="dlgX">&times;</button>';
+    html += '<h2>原题库对照</h2>';
+    html += '<div class="sub">原题库第 ' + q.n + ' 题 · ' + TYPE_CN[q.section] + ' · PDF 第 ' + q.p + ' 页' +
+      ' · 当前列表第 ' + (i + 1) + ' / ' + list.length + ' 题</div>';
+    html += '<div class="origbox origin-card" style="max-width:none;min-width:0">';
+    html += '<div class="o-stem">' + stemWithAnswer(q) + '</div>';
+    html += '<ul class="o-opts">';
+    itemsOf(q).forEach(function (it) {
+      var good = q.section === 'judge' ? (q.a === it.letter) : (q.a.indexOf(it.letter) >= 0);
+      var mine = picks.indexOf(it.letter) >= 0;
+      var cls = good ? 'ok' : (mine ? 'mine' : '');
+      html += '<li class="' + cls + '">' +
+        (q.section === 'judge' ? (it.letter === '正确' ? '√ ' : '× ') : it.letter + '、') + esc(it.text) +
+        (good ? '　← 正确答案' : '') + (mine && !good ? '　← 你选的' : '') + '</li>';
+    });
+    html += '</ul>';
+    html += '<div class="o-meta">你的答案：<b class="' + (right ? 'ok' : 'no') + '">' + esc(prettyAnswer(q, picks)) + '</b>' +
+      '　·　正确答案：<b>' + esc(ansText) + '</b>' +
+      '　·　出处：原题库第 ' + q.n + ' 题（PDF 第 ' + q.p + ' 页）</div>';
+    html += '</div>';
+    html += '<div class="row"><button class="btn ghost" id="orgPrev"' + (i <= 0 ? ' disabled' : '') + '>← 上一题</button>' +
+      '<button class="btn ghost" id="orgNext"' + (i >= list.length - 1 ? ' disabled' : '') + '>下一题 →</button>' +
+      '<span style="margin-left:auto"></span><button class="btn primary" id="orgClose">关闭</button></div>';
+    openDialog(html);
+    $('dlgX').onclick = closeDialog;
+    $('orgClose').onclick = closeDialog;
+    $('orgPrev').onclick = function () { if (ORIGIN.idx > 0) { ORIGIN.idx--; renderOriginPanel(); } };
+    $('orgNext').onclick = function () { if (ORIGIN.idx < ORIGIN.list.length - 1) { ORIGIN.idx++; renderOriginPanel(); } };
+  }
+
+  function openPracticeOrigin() {
+    var order = practiceOrder();
+    if (!order.length) { toast('当前模式没有题目'); return; }
+    openOriginPanel(order, P.idx, function (n) { return P.picks[n] || []; });
+  }
+  function openTestOrigin() {
+    if (!T) return;
+    openOriginPanel(T.nums, T.idx, function (n) { return T.picks[n] || []; });
+  }
+
   /* ==================== 练习状态 ==================== */
   var P = load(KEY_P, null) || { mode: 'order', idx: 0, order: null, picks: {}, open: {}, wrong: {}, shown: {} };
   P.picks = P.picks || {}; P.open = P.open || {}; P.wrong = P.wrong || {}; P.shown = P.shown || {};
@@ -454,6 +526,7 @@ details.orig summary:hover{text-decoration:underline}
       $('pFeedback').textContent = '';
       $('pFeedback').className = 'feedback';
       $('pConfirmMulti').classList.add('hide');
+      $('pOrigin').classList.add('hide');
       renderStats();
       return;
     }
@@ -495,7 +568,9 @@ details.orig summary:hover{text-decoration:underline}
       fb.className = 'feedback ' + (ok ? 'ok' : 'no');
       fb.innerHTML = (picks.length ? (ok ? '✔ 回答正确' : '✘ 回答错误') : '答案') +
         '　正确答案：<span class="ans">' + esc(prettyAnswer(q, q.section === 'judge' ? [q.a] : q.a.split(''))) + '</span>' +
-        '　·　原题库 PDF 第 ' + q.p + ' 页';
+        '　·　原题库 PDF 第 ' + q.p + ' 页' +
+        '　·　<button class="linkbtn" id="pOriginLink">对照原题库</button>';
+      $('pOriginLink').onclick = openPracticeOrigin;
     } else {
       fb.className = 'feedback';
       fb.textContent = q.section === 'multi'
@@ -506,6 +581,9 @@ details.orig summary:hover{text-decoration:underline}
     var multi = q.section === 'multi' && !revealed;
     $('pConfirmMulti').classList.toggle('hide', !multi);
     $('pConfirmMulti').disabled = !picks.length;
+    $('pOrigin').classList.remove('hide');
+    $('pOrigin').disabled = !revealed;
+    $('pOrigin').title = revealed ? '查看原题库题面与答案（含 PDF 页码）' : '作答后即可对照原题库（含答案）';
     renderStats();
   }
 
@@ -627,6 +705,7 @@ details.orig summary:hover{text-decoration:underline}
     $('tClock').textContent = clock((T.submitted ? T.endTs : Date.now()) - T.startTs);
     $('tSubmit').classList.toggle('hide', T.submitted);
     $('tReportBtn').classList.toggle('hide', !T.submitted);
+    $('tOrigin').classList.toggle('hide', !T.submitted);
 
     var num = T.nums[T.idx], q = byNum[num];
     $('tTag').textContent = TYPE_CN[q.section];
@@ -662,8 +741,10 @@ details.orig summary:hover{text-decoration:underline}
     if (T.submitted) {
       var ok = isRight(q, picks);
       fb.className = 'feedback ' + (!picks.length ? '' : ok ? 'ok' : 'no');
-      fb.innerHTML = !picks.length ? '本题未作答' :
-        (ok ? '✔ 回答正确' : '✘ 回答错误') + '　正确答案：<span class="ans">' + esc(q.a) + '</span>';
+      fb.innerHTML = (!picks.length ? '本题未作答' :
+        (ok ? '✔ 回答正确' : '✘ 回答错误') + '　正确答案：<span class="ans">' + esc(q.a) + '</span>') +
+        '　·　原题库 PDF 第 ' + q.p + ' 页　·　<button class="linkbtn" id="tOriginLink">对照原题库</button>';
+      $('tOriginLink').onclick = openTestOrigin;
     } else {
       fb.className = 'feedback';
       fb.textContent = q.section === 'multi' ? '多选题：可选多项，交卷时统一判定' : '交卷前不显示答案，可随时修改';
@@ -1056,6 +1137,7 @@ details.orig summary:hover{text-decoration:underline}
   $('pJumpBtn').onclick = practiceJump;
   $('pJump').onkeydown = function (e) { if (e.key === 'Enter') practiceJump(); };
   $('pCard').onclick = openPracticeCard;
+  $('pOrigin').onclick = openPracticeOrigin;
   $('sideCard').onclick = openPracticeCard;
   $('sideLast').onclick = function () { showTest(); openReport('all'); };
 
@@ -1066,6 +1148,7 @@ details.orig summary:hover{text-decoration:underline}
   $('tCardBtn').onclick = openTestCard;
   $('tSubmit').onclick = submitTest;
   $('tReportBtn').onclick = function () { openReport('all'); };
+  $('tOrigin').onclick = openTestOrigin;
   $('tExit').onclick = function () { exitTest(false); };
 
   document.addEventListener('keydown', function (e) {
@@ -1075,6 +1158,11 @@ details.orig summary:hover{text-decoration:underline}
       return;
     }
     var inTest = !$('testView').classList.contains('hide');
+    if (e.key === 'o' || e.key === 'O') {
+      if (inTest) { if (T && T.submitted) openTestOrigin(); }
+      else if (!$('pOrigin').disabled && !$('pOrigin').classList.contains('hide')) openPracticeOrigin();
+      return;
+    }
     var opts = document.querySelectorAll((inTest ? '#tOpts' : '#pOpts') + ' .opt');
     var map = { a: 0, b: 1, c: 2, d: 3 };
     if (e.key >= '1' && e.key <= '4' && !inTest) { var k = Number(e.key) - 1; if (opts[k]) opts[k].click(); return; }
