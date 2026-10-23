@@ -277,6 +277,7 @@ details.orig summary:hover{text-decoration:underline}
           <button class="btn ghost" id="pNext">下一题 →</button>
           <button class="btn ghost hide" id="pConfirmMulti">确认答案</button>
           <button class="btn ghost" id="pOrigin" title="查看原题库题面与答案">对照原题库</button>
+          <button class="btn ghost" id="pAuto" aria-pressed="true" title="答完一题后自动进入下一题（仅练习模式，模考不影响）">自动跳题：开</button>
           <button class="btn ghost" id="pCard">答题卡</button>
           <div class="jump">
             <span>跳到题库题号</span>
@@ -421,6 +422,17 @@ details.orig summary:hover{text-decoration:underline}
     return q.section === 'judge' ? letters[0] : letters.slice().sort().join('');
   }
 
+  /* 自动跳题开关（仅练习模式） */
+  function renderAutoBtn() {
+    var b = $('pAuto');
+    if (!b) return;
+    b.textContent = '自动跳题：' + (P.autoNext ? '开' : '关');
+    b.setAttribute('aria-pressed', P.autoNext ? 'true' : 'false');
+    b.title = P.autoNext
+      ? '答完一题后自动进入下一题（点击关闭；模考不受影响）'
+      : '当前答完题不会自动跳转（点击开启；模考不受影响）';
+  }
+
   /* ==================== 原题库对照（所有模式通用） ==================== */
   var ORIGIN = null;   // { list: [题号], idx: 位置, picker: fn(num)->letters }
 
@@ -480,6 +492,7 @@ details.orig summary:hover{text-decoration:underline}
   /* ==================== 练习状态 ==================== */
   var P = load(KEY_P, null) || { mode: 'order', idx: 0, order: null, picks: {}, open: {}, wrong: {}, shown: {} };
   P.picks = P.picks || {}; P.open = P.open || {}; P.wrong = P.wrong || {}; P.shown = P.shown || {};
+  if (typeof P.autoNext !== 'boolean') P.autoNext = true;
 
   var M = { mode: 'order' };
 
@@ -516,6 +529,7 @@ details.orig summary:hover{text-decoration:underline}
 
   /* ==================== 练习渲染 ==================== */
   function renderPractice() {
+    renderAutoBtn();
     var order = practiceOrder();
     if (!order.length) {
       $('pTag').textContent = '—';
@@ -609,12 +623,25 @@ details.orig summary:hover{text-decoration:underline}
     if (isRight(q, [it.letter])) delete P.wrong[num];
     else P.wrong[num] = true;
     savePractice(); renderStats(); renderPractice();
+    maybeAutoNext(curIdx, num);
+  }
 
-    if (P.mode !== 'wrong') {
-      setTimeout(function () {
-        if (P.idx === curIdx && P.idx < order.length - 1) { P.idx++; savePractice(); renderPractice(); }
-      }, 620);
-    }
+  /* 自动跳下一题：仅练习类模式（顺序/乱序/错题重做），模考不参与 */
+  function maybeAutoNext(prevIdx, num) {
+    if (!P.autoNext) return;
+    var after = practiceOrder();
+    if (after.indexOf(num) < 0) return;      // 该题已从列表移除（错题答对），列表已自然前进
+    if (P.idx !== prevIdx) return;           // 用户已手动翻页
+    if (prevIdx >= after.length - 1) return; // 已经是最后一题
+    setTimeout(function () {
+      if (!P.autoNext) return;
+      if (P.idx !== prevIdx) return;
+      var now = practiceOrder();
+      if (now.indexOf(num) < 0) return;
+      if (prevIdx >= now.length - 1) return;
+      P.idx = prevIdx + 1;
+      savePractice(); renderPractice();
+    }, 650);
   }
 
   function practiceConfirmMulti() {
@@ -623,9 +650,11 @@ details.orig summary:hover{text-decoration:underline}
     var num = order[P.idx], q = byNum[num];
     var picks = P.picks[num] || [];
     if (!picks.length) { toast('请先选择答案'); return; }
+    var curIdx = P.idx;
     P.open[num] = true;
     if (isRight(q, picks)) delete P.wrong[num]; else P.wrong[num] = true;
     savePractice(); renderPractice();
+    maybeAutoNext(curIdx, num);
   }
 
   function practiceGo(delta) {
@@ -1068,11 +1097,18 @@ details.orig summary:hover{text-decoration:underline}
       }
       P.order = arr;
     }
+    if (mode === 'wrong') {
+      // 错题重做：清掉这些题之前的作答状态，保证可以重新作答
+      Object.keys(P.wrong).forEach(function (n) {
+        delete P.open[n];
+        delete P.picks[n];
+      });
+    }
     P.idx = 0;
     savePractice();
     showPractice();
     renderModes();
-    if (!silent) toast(mode === 'order' ? '已切换到顺序刷题' : mode === 'shuffle' ? '已重新打乱顺序' : '进入错题重做');
+    if (!silent) toast(mode === 'order' ? '已切换到顺序刷题' : mode === 'shuffle' ? '已重新打乱顺序' : '进入错题重做，错题已恢复为未作答状态');
   }
 
   function renderModes() {
@@ -1137,6 +1173,11 @@ details.orig summary:hover{text-decoration:underline}
   $('pJumpBtn').onclick = practiceJump;
   $('pJump').onkeydown = function (e) { if (e.key === 'Enter') practiceJump(); };
   $('pCard').onclick = openPracticeCard;
+  $('pAuto').onclick = function () {
+    P.autoNext = !P.autoNext;
+    savePractice(); renderAutoBtn(); renderPractice();
+    toast(P.autoNext ? '已开启自动跳题：答完自动进入下一题' : '已关闭自动跳题：答完停在本题');
+  };
   $('pOrigin').onclick = openPracticeOrigin;
   $('sideCard').onclick = openPracticeCard;
   $('sideLast').onclick = function () { showTest(); openReport('all'); };
