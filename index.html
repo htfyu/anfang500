@@ -311,7 +311,7 @@ details.orig summary:hover{text-decoration:underline}
           <button class="btn ghost" id="pNext">下一题 →</button>
           <button class="btn ghost hide" id="pConfirmMulti">确认答案</button>
           <button class="btn ghost" id="pOrigin" title="查看原题库题面与答案">对照原题库</button>
-          <button class="btn ghost" id="pAuto" aria-pressed="true" title="答完一题后自动进入下一题（仅练习模式，模考不影响）">自动跳题：开</button>
+          <button class="btn ghost" id="pAuto" aria-pressed="true" title="答完单选题/判断题后自动进入下一题（练习与随机100题模考共用此设置）">自动跳题：开</button>
           <button class="btn ghost" id="pCard">答题卡</button>
           <div class="jump">
             <span>跳到题库题号</span>
@@ -348,6 +348,7 @@ details.orig summary:hover{text-decoration:underline}
       <div class="clock" id="tClock">00:00</div>
       <div class="prog" id="tProg">卷面第 1 / 100 题 · 已答 0</div>
       <div class="sp">
+        <button class="btn" id="tAuto" aria-pressed="true" title="答完单选题/判断题后自动进入下一题">自动跳题：开</button>
         <button class="btn" id="tCardBtn">答题卡</button>
         <button class="btn submit" id="tSubmit">交 卷</button>
         <button class="btn" id="tExit">退出模考</button>
@@ -482,15 +483,19 @@ details.orig summary:hover{text-decoration:underline}
     return q.section === 'judge' ? letters[0] : letters.slice().sort().join('');
   }
 
-  /* 自动跳题开关（仅练习模式） */
+  /* 自动跳题开关（练习 + 随机100题模考通用，共用同一份设置） */
   function renderAutoBtn() {
-    var b = $('pAuto');
-    if (!b) return;
-    b.textContent = '自动跳题：' + (P.autoNext ? '开' : '关');
-    b.setAttribute('aria-pressed', P.autoNext ? 'true' : 'false');
-    b.title = P.autoNext
-      ? '答完一题后自动进入下一题（点击关闭；模考不受影响）'
-      : '当前答完题不会自动跳转（点击开启；模考不受影响）';
+    var txt = '自动跳题：' + (P.autoNext ? '开' : '关');
+    var tip = P.autoNext
+      ? '答完单选题/判断题后自动进入下一题（点击关闭；多选题仍需手动点下一题）'
+      : '当前答完题不会自动跳转（点击开启；多选题始终手动翻页）';
+    ['pAuto', 'tAuto'].forEach(function (id) {
+      var b = $(id);
+      if (!b) return;
+      b.textContent = txt;
+      b.setAttribute('aria-pressed', P.autoNext ? 'true' : 'false');
+      b.title = tip;
+    });
   }
 
   /* ==================== 原题库对照（所有模式通用） ==================== */
@@ -686,7 +691,7 @@ details.orig summary:hover{text-decoration:underline}
     maybeAutoNext(curIdx, num);
   }
 
-  /* 自动跳下一题：仅练习类模式（顺序/乱序/错题记录本），模考不参与 */
+  /* 自动跳下一题：练习类模式（顺序/乱序/错题记录本） */
   function maybeAutoNext(prevIdx, num) {
     if (!P.autoNext) return;
     var after = practiceOrder();
@@ -797,6 +802,7 @@ details.orig summary:hover{text-decoration:underline}
     $('tSubmit').classList.toggle('hide', T.submitted);
     $('tReportBtn').classList.toggle('hide', !T.submitted);
     $('tOrigin').classList.toggle('hide', !T.submitted);
+    renderAutoBtn();
 
     var num = T.nums[T.idx], q = byNum[num];
     $('tTag').textContent = TYPE_CN[q.section];
@@ -847,15 +853,30 @@ details.orig summary:hover{text-decoration:underline}
     var num = T.nums[T.idx], q = byNum[num];
     var it = itemsOf(q)[i];
     if (!it) return;
+    var curIdx = T.idx;
     if (q.section === 'multi') {
       var picks = testPicks(num);
       var k = picks.indexOf(it.letter);
       if (k >= 0) picks.splice(k, 1); else picks.push(it.letter);
       if (picks.length) T.picks[num] = picks; else delete T.picks[num];
-    } else {
-      T.picks[num] = [it.letter];
+      saveTest(); renderTest();
+      return;   // 多选题不自动跳，留时间把选项选全
     }
+    T.picks[num] = [it.letter];
     saveTest(); renderTest();
+    maybeTestAutoNext(curIdx);
+  }
+
+  /* 模考自动跳下一题：只对单选 / 判断生效，多选题始终手动翻页 */
+  function maybeTestAutoNext(prevIdx) {
+    if (!P.autoNext || !T || T.submitted) return;
+    if (prevIdx >= T.nums.length - 1) return;
+    setTimeout(function () {
+      if (!P.autoNext || !T || T.submitted) return;
+      if (T.idx !== prevIdx) return;
+      T.idx = prevIdx + 1;
+      saveTest(); renderTest();
+    }, 420);
   }
 
   function testGo(delta) {
@@ -1586,6 +1607,11 @@ details.orig summary:hover{text-decoration:underline}
     P.autoNext = !P.autoNext;
     savePractice(); renderAutoBtn(); renderPractice();
     toast(P.autoNext ? '已开启自动跳题：答完自动进入下一题' : '已关闭自动跳题：答完停在本题');
+  };
+  $('tAuto').onclick = function () {
+    P.autoNext = !P.autoNext;
+    savePractice(); renderAutoBtn(); renderTest();
+    toast(P.autoNext ? '已开启自动跳题：模考里单/判断题答完自动下一题' : '已关闭自动跳题：答完停在本题');
   };
   $('pOrigin').onclick = openPracticeOrigin;
   $('sideCard').onclick = openPracticeCard;
