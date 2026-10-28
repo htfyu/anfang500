@@ -277,14 +277,14 @@ details.orig summary:hover{text-decoration:underline}
     <div class="logo">安</div>
     <div>
       <h1>安全防范系统安装维护员</h1>
-      <p>500 题练习 · 随机 100 题模考 · 交卷对照原题库</p>
+      <p>500 题练习 · 模考测试 · 交卷对照原题库</p>
     </div>
   </div>
   <div class="stats" id="stats"></div>
   <nav class="actions">
     <button class="btn" data-mode="order" id="mOrder">顺序刷题</button>
     <button class="btn" data-mode="shuffle" id="mShuffle">乱序刷题</button>
-    <button class="btn primary" id="btnTest">随机100题模考</button>
+    <button class="btn primary" id="btnTest">模考测试</button>
     <button class="btn ai" id="btnQA">现场编题30道</button>
     <button class="btn" id="btnWrong">错题记录本</button>
     <button class="btn" id="btnShowAll">显示全部答案</button>
@@ -311,7 +311,7 @@ details.orig summary:hover{text-decoration:underline}
           <button class="btn ghost" id="pNext">下一题 →</button>
           <button class="btn ghost hide" id="pConfirmMulti">确认答案</button>
           <button class="btn ghost" id="pOrigin" title="查看原题库题面与答案">对照原题库</button>
-          <button class="btn ghost" id="pAuto" aria-pressed="true" title="答完单选题/判断题后自动进入下一题（练习与随机100题模考共用此设置）">自动跳题：开</button>
+          <button class="btn ghost" id="pAuto" aria-pressed="true" title="答完单选题/判断题后自动进入下一题（练习与模考测试共用此设置）">自动跳题：开</button>
           <button class="btn ghost" id="pCard">答题卡</button>
           <div class="jump">
             <span>跳到题库题号</span>
@@ -344,7 +344,7 @@ details.orig summary:hover{text-decoration:underline}
   <!-- ============ 模考 ============ -->
   <section id="testView" class="hide">
     <div class="testbar">
-      <div class="ttl">随机 100 题模考</div>
+      <div class="ttl">模考测试 · 100 题</div>
       <div class="clock" id="tClock">00:00</div>
       <div class="prog" id="tProg">卷面第 1 / 100 题 · 已答 0</div>
       <div class="sp">
@@ -381,7 +381,7 @@ details.orig summary:hover{text-decoration:underline}
 
       <aside class="card side">
         <h3>模考须知</h3>
-        <div class="kv"><span>题量</span><b>100 题（随机不重复）</b></div>
+        <div class="kv"><span>题量</span><b>100 题：单选 70 · 多选 10 · 判断 20</b></div>
         <div class="kv"><span>计时</span><b id="tElapsed">00:00</b></div>
         <div class="kv"><span>已答</span><b id="tDone">0</b></div>
         <div class="kv"><span>未答</span><b id="tBlank">100</b></div>
@@ -436,6 +436,17 @@ details.orig summary:hover{text-decoration:underline}
   BANK.forEach(function (q) { byNum[q.n] = q; });
   var ALL = BANK.map(function (q) { return q.n; });
   var TYPE_CN = { single: '单选题', multi: '多选题', judge: '判断题' };
+  var SECTION_SHORT = { single: '单选', multi: '多选', judge: '判断' };
+
+  /* 模考分段：算出当前是「多选 3/10」这种位置（按题型连续段） */
+  function testSectionPos(idx) {
+    if (!T || !T.nums || !T.nums[idx]) return null;
+    var s = byNum[T.nums[idx]].section;
+    var start = idx, end = idx;
+    while (start > 0 && byNum[T.nums[start - 1]].section === s) start--;
+    while (end < T.nums.length - 1 && byNum[T.nums[end + 1]].section === s) end++;
+    return { section: s, i: idx - start + 1, total: end - start + 1 };
+  }
   var KEY_P = 'anfang500.v2.practice';
   var KEY_T = 'anfang500.v2.test';
 
@@ -483,7 +494,7 @@ details.orig summary:hover{text-decoration:underline}
     return q.section === 'judge' ? letters[0] : letters.slice().sort().join('');
   }
 
-  /* 自动跳题开关（练习 + 随机100题模考通用，共用同一份设置） */
+  /* 自动跳题开关（练习 + 模考测试通用，共用同一份设置） */
   function renderAutoBtn() {
     var txt = '自动跳题：' + (P.autoNext ? '开' : '关');
     var tip = P.autoNext
@@ -760,18 +771,30 @@ details.orig summary:hover{text-decoration:underline}
       });
       return;
     }
-    confirmDialog('随机 100 题模考',
-      '将从 500 题中随机抽取 100 题（不重复），过程中不显示答案，交卷后逐题对照原题库核对。\n\n现在开始吗？',
+    confirmDialog('模考测试',
+      '模考测试固定 100 题，按题型分段：\n· 单选 70 题（从 300 道单选里随机抽）\n· 多选 10 题（做完单选后进入）\n· 判断 20 题（做完多选后进入）\n\n过程中不显示答案，交卷后逐题对照原题库核对。现在开始吗？',
       '开始', function () { newTest(); });
   }
 
   function newTest() {
-    var pool = ALL.slice();
-    for (var i = pool.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    // 按题型分段抽题：70 单选 → 10 多选 → 20 判断（顺序固定）
+    var pool = { single: [], multi: [], judge: [] };
+    ALL.forEach(function (n) {
+      var sec = byNum[n].section;
+      if (pool[sec]) pool[sec].push(n);
+    });
+    shuffleArr(pool.single); shuffleArr(pool.multi); shuffleArr(pool.judge);
+    var nums = pool.single.slice(0, 70)
+      .concat(pool.multi.slice(0, 10))
+      .concat(pool.judge.slice(0, 20));
+    if (nums.length < 100) {           // 某类题不足时的兜底
+      var used = {};
+      nums.forEach(function (n) { used[n] = 1; });
+      ALL.forEach(function (n) {
+        if (nums.length < 100 && !used[n]) { nums.push(n); used[n] = 1; }
+      });
     }
-    T = { nums: pool.slice(0, 100), picks: {}, idx: 0, startTs: Date.now(), endTs: 0, submitted: false };
+    T = { nums: nums, picks: {}, idx: 0, startTs: Date.now(), endTs: 0, submitted: false };
     saveTest();
     showTest();
     startClock();
@@ -794,7 +817,10 @@ details.orig summary:hover{text-decoration:underline}
     if (!T) return;
     var n = T.nums.length;
     var done = testDone();
-    $('tProg').textContent = '卷面第 ' + (T.idx + 1) + ' / ' + n + ' 题 · 已答 ' + done;
+    var pos = testSectionPos(T.idx);
+    $('tProg').textContent = '卷面第 ' + (T.idx + 1) + ' / ' + n + ' 题' +
+      (pos ? ' · ' + SECTION_SHORT[pos.section] + ' ' + pos.i + '/' + pos.total : '') +
+      ' · 已答 ' + done;
     $('tDone').textContent = done;
     $('tBlank').textContent = n - done;
     $('tElapsed').textContent = clock((T.submitted ? T.endTs : Date.now()) - T.startTs);
@@ -951,8 +977,8 @@ details.orig summary:hover{text-decoration:underline}
 
     var html = '';
     html += '<button class="x" id="dlgX">&times;</button>';
-    html += '<h2>模考成绩单</h2>';
-    html += '<div class="sub">随机 100 题模考 · 交卷时间 ' + new Date(T.endTs).toLocaleString('zh-CN') +
+    html += '<h2>模考测试 · 成绩单</h2>';
+    html += '<div class="sub">模考测试 · 单选 70 / 多选 10 / 判断 20 · 交卷时间 ' + new Date(T.endTs).toLocaleString('zh-CN') +
       ' · 本次答错的题已自动记入「错题记录本」 · 正确答案均取自原题库 PDF</div>';
 
     html += '<div class="scoreboard">' +
