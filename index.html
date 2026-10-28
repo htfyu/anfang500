@@ -286,7 +286,7 @@ details.orig summary:hover{text-decoration:underline}
     <button class="btn" data-mode="shuffle" id="mShuffle">乱序刷题</button>
     <button class="btn primary" id="btnTest">随机100题模考</button>
     <button class="btn ai" id="btnQA">现场编题30道</button>
-    <button class="btn" id="btnWrong">错题重做</button>
+    <button class="btn" id="btnWrong">错题记录本</button>
     <button class="btn" id="btnShowAll">显示全部答案</button>
     <button class="btn danger" id="btnReset">重置</button>
   </nav>
@@ -577,14 +577,14 @@ details.orig summary:hover{text-decoration:underline}
     var s = practiceStats();
     $('stats').innerHTML =
       '已答 <b>' + s.picked + '</b> / 500　答对 <b>' + s.right + '</b>　' +
-      '<span class="w">答错 <b>' + s.wrong + '</b></span>　错题本 <b>' + Object.keys(P.wrong).length + '</b>';
+      '<span class="w">答错 <b>' + s.wrong + '</b></span>　错题记录本 <b>' + Object.keys(P.wrong).length + '</b>';
     var pct = Math.round(s.picked / 5);
     $('pBar').style.width = pct + '%';
     $('pStats').innerHTML =
       '<div class="kv"><span>已作答</span><b>' + s.picked + ' 题</b></div>' +
       '<div class="kv"><span>答对</span><b>' + s.right + ' 题</b></div>' +
       '<div class="kv"><span>答错</span><b>' + s.wrong + ' 题</b></div>' +
-      '<div class="kv"><span>错题本</span><b>' + Object.keys(P.wrong).length + ' 题</b></div>';
+      '<div class="kv"><span>错题记录本</span><b>' + Object.keys(P.wrong).length + ' 题</b></div>';
   }
 
   /* ==================== 练习渲染 ==================== */
@@ -595,7 +595,7 @@ details.orig summary:hover{text-decoration:underline}
       $('pTag').textContent = '—';
       $('pIndex').textContent = '当前模式没有题目';
       $('pPdf').textContent = '';
-      $('pStem').textContent = P.mode === 'wrong' ? '错题本还是空的，先去刷题吧。' : '当前模式没有题目';
+      $('pStem').textContent = P.mode === 'wrong' ? '错题记录本还是空的，先去刷题吧（答错和模考做错的题都会自动记进来）。' : '当前模式没有题目';
       $('pOpts').innerHTML = '';
       $('pFeedback').textContent = '';
       $('pFeedback').className = 'feedback';
@@ -686,7 +686,7 @@ details.orig summary:hover{text-decoration:underline}
     maybeAutoNext(curIdx, num);
   }
 
-  /* 自动跳下一题：仅练习类模式（顺序/乱序/错题重做），模考不参与 */
+  /* 自动跳下一题：仅练习类模式（顺序/乱序/错题记录本），模考不参与 */
   function maybeAutoNext(prevIdx, num) {
     if (!P.autoNext) return;
     var after = practiceOrder();
@@ -732,7 +732,7 @@ details.orig summary:hover{text-decoration:underline}
     var idx = order.indexOf(v);
     if (idx < 0) {
       toast(byNum[v] ? ('题库第 ' + v + ' 题不在当前模式里（' +
-        (P.mode === 'wrong' ? '错题本' : P.mode === 'shuffle' ? '乱序列表' : '当前列表') + '）') : ('题库没有第 ' + v + ' 题'));
+        (P.mode === 'wrong' ? '错题记录本' : P.mode === 'shuffle' ? '乱序列表' : '当前列表') + '）') : ('题库没有第 ' + v + ' 题'));
       return;
     }
     P.idx = idx; savePractice(); renderPractice();
@@ -886,8 +886,21 @@ details.orig summary:hover{text-decoration:underline}
       T.submitted = true;
       T.endTs = Date.now();
       saveTest();
+      // 交卷即记账：本次「答错」的题自动进入「错题记录本」（未作答的不算，免得把没见过的题灌进来）
+      var added = 0;
+      T.nums.forEach(function (n) {
+        var q = byNum[n];
+        var picks = T.picks[n] || [];
+        if (picks.length && !isRight(q, picks)) {
+          if (!P.wrong[n]) added++;
+          P.wrong[n] = true;
+        }
+      });
+      savePractice();
+      renderStats();
       renderTest();
       openReport();
+      if (added) setTimeout(function () { toast('已把 ' + added + ' 道答错的题记入错题记录本'); }, 500);
     });
   }
 
@@ -919,7 +932,7 @@ details.orig summary:hover{text-decoration:underline}
     html += '<button class="x" id="dlgX">&times;</button>';
     html += '<h2>模考成绩单</h2>';
     html += '<div class="sub">随机 100 题模考 · 交卷时间 ' + new Date(T.endTs).toLocaleString('zh-CN') +
-      ' · 正确答案均取自原题库 PDF</div>';
+      ' · 本次答错的题已自动记入「错题记录本」 · 正确答案均取自原题库 PDF</div>';
 
     html += '<div class="scoreboard">' +
       '<div class="big" style="color:' + color + '">' + score + '<small>分</small></div>' +
@@ -938,7 +951,6 @@ details.orig summary:hover{text-decoration:underline}
       '<button class="btn ghost" id="dlgPrint">打印 / 另存 PDF</button>' +
       '<span class="sp"></span>' +
       '<button class="btn" id="dlgRedoBad"' + (badCount ? '' : ' disabled') + '>重做错题</button>' +
-      '<button class="btn" id="dlgAddWrong">错题加入错题本</button>' +
       '<button class="btn" id="dlgAgain">再来一套</button>' +
       '<button class="btn primary" id="dlgBack">返回练习</button>' +
       '</div>';
@@ -997,7 +1009,6 @@ details.orig summary:hover{text-decoration:underline}
     $('dlgCopy').onclick = function () { copyReport(g.rows); };
     $('dlgPrint').onclick = function () { window.print(); };
     $('dlgRedoBad').onclick = function () { redoBad(g); };
-    $('dlgAddWrong').onclick = function () { addWrongBook(g); };
     $('dlgAgain').onclick = function () { closeDialog(); newTest(); };
     $('dlgBack').onclick = function () { closeDialog(); exitTest(true); };
   }
@@ -1026,24 +1037,15 @@ details.orig summary:hover{text-decoration:underline}
     document.body.removeChild(ta);
   }
 
-  function addWrongBook(g) {
-    var added = 0;
-    g.rows.forEach(function (r) {
-      if (r.status === 'right') return;
-      if (!P.wrong[r.num]) { P.wrong[r.num] = true; added++; }
-    });
-    savePractice(); renderStats();
-    toast(added ? ('已把 ' + added + ' 道错题/未答题加入练习错题本') : '这些题已经在错题本里了');
-  }
-
   function redoBad(g) {
     var nums = g.rows.filter(function (r) { return r.status !== 'right'; }).map(function (r) { return r.num; });
     if (!nums.length) { toast('本次没有错题'); return; }
     nums.forEach(function (n) { P.wrong[n] = true; });
+    savePractice(); renderStats();
     closeDialog();
     exitTest(true);
     setMode('wrong', true);
-    toast('已进入错题重做（' + nums.length + ' 题）');
+    toast('已进入错题记录本（' + nums.length + ' 题）');
   }
 
   function exitTest(silent) {
@@ -1436,7 +1438,7 @@ details.orig summary:hover{text-decoration:underline}
     });
     var pct = Math.round(score * 1000 / QA.list.length) / 10;
     var used = clock(Date.now() - QA.startTs);
-    qaMsg('ai', '本轮结束 🎉\n共 ' + QA.list.length + ' 题，答对 ' + right + ' 题（含重答得分折算），得分 ' + pct + ' 分，用时 ' + used + '。\n错题和跳过的题都可以在「练习」里继续攻。', 'sys');
+    qaMsg('ai', '本轮结束 🎉\n共 ' + QA.list.length + ' 题，答对 ' + right + ' 题（含重答得分折算），得分 ' + pct + ' 分，用时 ' + used + '。\n本轮答错和跳过的题都在上面的对话里留了答案和出处，点「再来一套」可以继续练。', 'sys');
     openDialog(
       '<button class="x" id="qaDlgX">&times;</button>' +
       '<h2>现场编题 · 成绩单</h2>' +
@@ -1505,7 +1507,7 @@ details.orig summary:hover{text-decoration:underline}
       P.order = arr;
     }
     if (mode === 'wrong') {
-      // 错题重做：清掉这些题之前的作答状态，保证可以重新作答
+      // 错题记录本：清掉这些题之前的作答状态，保证可以重新作答
       Object.keys(P.wrong).forEach(function (n) {
         delete P.open[n];
         delete P.picks[n];
@@ -1515,7 +1517,7 @@ details.orig summary:hover{text-decoration:underline}
     savePractice();
     showPractice();
     renderModes();
-    if (!silent) toast(mode === 'order' ? '已切换到顺序刷题' : mode === 'shuffle' ? '已重新打乱顺序' : '进入错题重做，错题已恢复为未作答状态');
+    if (!silent) toast(mode === 'order' ? '已切换到顺序刷题' : mode === 'shuffle' ? '已重新打乱顺序' : '已打开错题记录本，错题已恢复为未作答状态');
   }
 
   function renderModes() {
@@ -1551,12 +1553,12 @@ details.orig summary:hover{text-decoration:underline}
   $('mOrder').onclick = function () { if (P.mode !== 'order') setMode('order'); };
   $('mShuffle').onclick = function () { setMode('shuffle'); };
   $('btnWrong').onclick = function () {
-    if (!Object.keys(P.wrong).length) { toast('错题本还是空的，先把答错的题攒起来吧'); return; }
+    if (!Object.keys(P.wrong).length) { toast('错题记录本还是空的：练习答错、模考交卷时做错的题都会自动记进来'); return; }
     setMode('wrong');
   };
   $('btnTest').onclick = startTest;
   $('btnShowAll').onclick = function () {
-    confirmDialog('显示全部答案', '将把 500 道题的答案全部标出（不回填你的作答，也不影响错题本）。继续吗？', '显示', function () {
+    confirmDialog('显示全部答案', '将把 500 道题的答案全部标出（不回填你的作答，也不影响错题记录本）。继续吗？', '显示', function () {
       ALL.forEach(function (n) { P.open[n] = true; });
       savePractice();
       if (P.mode === 'wrong') setMode('order', true);
@@ -1565,7 +1567,7 @@ details.orig summary:hover{text-decoration:underline}
     });
   };
   $('btnReset').onclick = function () {
-    confirmDialog('重置', '将清空全部练习记录、错题本和上次模考成绩，确定吗？', '清空', function () {
+    confirmDialog('重置', '将清空全部练习记录、错题记录本和上次模考成绩，确定吗？', '清空', function () {
       try { localStorage.removeItem(KEY_P); localStorage.removeItem(KEY_T); } catch (e) {}
       P = { mode: 'order', idx: 0, order: null, picks: {}, open: {}, wrong: {}, shown: {} };
       T = null;
